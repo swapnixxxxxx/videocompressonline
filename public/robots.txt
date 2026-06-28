@@ -1,0 +1,14 @@
+# robots.txt — VideoCompressOnline
+# https://videocompressonline.com
+
+User-agent: *
+Allow: /
+
+# Disallow error pages — no SEO value
+Disallow: /400
+Disallow: /403
+Disallow: /404
+Disallow: /500
+
+# Sitemap location
+Sitemap: https://videocompressonline.com/sitemap-index.xml

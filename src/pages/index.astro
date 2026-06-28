@@ -1,11 +1,744 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Layout>
-	<Welcome />
+	<!-- ═══════════════════════════════════════ HEADER ═══════════════════════════════════════ -->
+	<header class="w-full bg-[var(--color-canvas)]/80 backdrop-blur-xl border-b border-[var(--color-hairline)] h-16 flex items-center sticky top-0 z-50">
+		<div class="max-w-6xl mx-auto w-full px-6 flex items-center justify-between">
+			<a href="/" class="flex items-center gap-2.5 group">
+				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-[var(--color-ink)]">
+					<path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.15"/>
+					<path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span class="font-bold text-[15px] tracking-[-0.3px] text-[var(--color-ink)]">VideoCompressOnline</span>
+			</a>
+			<button
+				id="theme-toggle"
+				class="flex items-center gap-2.5 px-4 py-2 rounded-full border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] text-sm font-medium cursor-pointer outline-none focus:outline-none active:scale-95"
+				style="transition: border-color 200ms ease, transform 100ms ease;"
+				aria-label="Toggle theme"
+			>
+				<div class="relative w-4 h-4">
+					<svg id="icon-moon" class="absolute inset-0 w-4 h-4 opacity-0" style="transition: opacity 200ms ease, transform 200ms ease;" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+					<svg id="icon-sun" class="absolute inset-0 w-4 h-4 opacity-0" style="transition: opacity 200ms ease, transform 200ms ease;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.32a1 1 0 011.415 0l.708.708a1 1 0 01-1.414 1.414l-.708-.708a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-4.22 4.22a1 1 0 010 1.415l-.708.708a1 1 0 01-1.414-1.414l.708-.708a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.32a1 1 0 01-1.415 0l-.708-.708a1 1 0 011.414-1.414l.708.708a1 1 0 010 1.414zM4 10a1 1 0 01-1 1H2a1 1 0 110-2h1a1 1 0 011 1zm2.32-4.22a1 1 0 010-1.415l.708-.708a1 1 0 011.414 1.414l-.708.708a1 1 0 01-1.415 0zM10 5a5 5 0 100 10 5 5 0 000-10z" clip-rule="evenodd"/></svg>
+				</div>
+				<span id="theme-label" class="select-none">Dark</span>
+			</button>
+		</div>
+	</header>
+
+	<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+	<main class="flex-grow flex flex-col items-center relative px-4 pt-20 pb-28 md:pt-28 md:pb-36">
+		<!-- Mesh Gradient Background -->
+		<div class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+			<div class="absolute inset-0 opacity-30" style="background: radial-gradient(ellipse 80% 50% at 40% 40%, rgba(0, 124, 240, 0.15), transparent), radial-gradient(ellipse 60% 50% at 70% 20%, rgba(121, 40, 202, 0.1), transparent), radial-gradient(ellipse 50% 50% at 50% 90%, rgba(255, 0, 128, 0.1), transparent);"></div>
+		</div>
+
+		<div class="z-10 w-full max-w-4xl text-center flex flex-col items-center">
+			<!-- Trust badge -->
+			<div class="inline-flex items-center rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-4 py-1.5 text-xs font-medium text-[var(--color-body)] mb-10 shadow-sm backdrop-blur-sm">
+				<span class="relative flex h-2 w-2 mr-2.5">
+					<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+					<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+				</span>
+				100% Client-Side &middot; Videos never leave your device
+			</div>
+
+			<h1 class="text-[clamp(2.5rem,6vw,4.5rem)] font-bold tracking-[-0.04em] text-[var(--color-ink)] mb-5 leading-[1.05]">
+				Free Online Video Compressor<br/>
+				<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#007cf0] via-[#00b4d8] to-[#00dfd8]">Fast. Private. No Upload.</span>
+			</h1>
+
+			<p class="text-lg leading-relaxed text-[var(--color-body)] max-w-xl mb-14">
+				Compress MP4 videos up to 90% smaller — directly in your browser.<br class="hidden md:block" />
+				Best free video compressor for Discord, email, and social media. Up to 2 GB, no watermarks.
+			</p>
+
+			<!-- ═══════════════════ UPLOADER CARD ═══════════════════ -->
+			<div class="w-full max-w-3xl bg-[var(--color-canvas)] rounded-2xl border border-[var(--color-hairline)] shadow-[0_0_0_1px_var(--hairline),0_2px_4px_rgba(0,0,0,0.02),0_24px_48px_-12px_rgba(0,0,0,0.06)] p-3 md:p-8">
+				<div
+					id="drop-zone"
+					class="relative border-2 border-dashed border-[var(--color-hairline)] rounded-xl p-6 md:p-14 flex flex-col items-center justify-center cursor-pointer bg-[var(--color-canvas-soft)] hover:border-[var(--color-hairline-strong)] group"
+					style="transition: border-color 200ms ease, background-color 200ms ease;"
+				>
+					<!-- Drag active state overlay -->
+					<div class="absolute inset-0 rounded-xl bg-[var(--color-link)]/5 opacity-0 pointer-events-none" id="drag-overlay" style="transition: opacity 200ms ease;"></div>
+
+					<div class="flex flex-col items-center z-10">
+						<div class="w-14 h-14 rounded-2xl bg-[var(--color-canvas-soft-2)] border border-[var(--color-hairline)] flex items-center justify-center mb-5 group-hover:scale-105" style="transition: transform 200ms ease;">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-mute)]">
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+								<polyline points="17 8 12 3 7 8"/>
+								<line x1="12" y1="3" x2="12" y2="15"/>
+							</svg>
+						</div>
+
+						<h3 class="text-lg font-semibold tracking-[-0.3px] text-[var(--color-ink)] mb-1.5">Drag and drop your video</h3>
+						<p class="text-sm text-[var(--color-mute)] mb-8">MP4, WebM, MKV, MOV &middot; Up to 2 GB</p>
+
+						<!-- Upload Button -->
+						<div class="flex items-center justify-center">
+							<label class="rounded-full bg-[var(--color-primary)] shadow-lg hover:shadow-xl text-[var(--color-on-primary)] px-5 md:px-7 py-2.5 md:py-3 font-semibold text-[15px] cursor-pointer select-none outline-none flex items-center gap-2" style="transition: all 200ms ease;" onmouseenter="this.style.opacity='0.85'" onmouseleave="this.style.opacity='1'">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+								Choose File
+								<input type="file" id="file-input" class="hidden" accept="video/*" tabindex="-1" />
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<!-- ═══════════════════ TARGET SIZE ═══════════════════ -->
+				<div class="mt-4 border border-[var(--color-hairline)] rounded-xl bg-[var(--color-canvas-soft)] overflow-hidden">
+					<details class="group" id="target-size-details" name="settings-accordion" open>
+						<summary class="flex items-center justify-between px-6 py-4 cursor-pointer select-none outline-none hover:bg-[var(--color-canvas-soft-2)] font-semibold text-sm text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden" style="transition: background-color 150ms ease;">
+							<div class="flex items-center gap-2.5">
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)]"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+								Target Size
+							</div>
+							<div class="flex items-center gap-3">
+								<span class="bg-[var(--color-canvas-soft-2)] border border-[var(--color-hairline)] px-2.5 py-0.5 rounded-md text-xs text-[var(--color-mute)] font-mono group-open:hidden">Configure</span>
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+							</div>
+						</summary>
+
+						<div class="px-6 md:px-8 py-8 border-t border-[var(--color-hairline)] bg-[var(--color-canvas)]">
+							<div>
+								<label class="block text-xs font-semibold text-[var(--color-mute)] uppercase tracking-wider mb-2">Target Size</label>
+								<div class="flex bg-[var(--color-canvas-soft)] p-1 rounded-lg border border-[var(--color-hairline)]">
+									<button type="button" class="seg-btn flex-1 text-sm font-semibold rounded-md py-2 outline-none" data-group="target-size" data-value="8">8 MB</button>
+									<button type="button" class="seg-btn active flex-1 text-sm font-semibold rounded-md py-2 outline-none" data-group="target-size" data-value="25">25 MB</button>
+									<button type="button" class="seg-btn flex-1 text-sm font-semibold rounded-md py-2 outline-none" data-group="target-size" data-value="50">50 MB</button>
+									<button type="button" class="seg-btn flex-1 text-sm font-semibold rounded-md py-2 outline-none" data-group="target-size" data-value="100">100 MB</button>
+								</div>
+								<p class="text-[11px] text-[var(--color-mute)] mt-2 leading-tight">Select the maximum file size for the output video. The compressor will adjust the bitrate to fit within this limit.</p>
+							</div>
+
+							<div class="mt-8 pt-6 border-t border-[var(--color-hairline)]">
+								<label class="block text-xs font-semibold text-[var(--color-mute)] uppercase tracking-wider mb-2">Preserve Original FPS</label>
+								<label class="flex items-center gap-3 cursor-pointer mt-1 select-none">
+									<div class="toggle-switch">
+										<input type="checkbox" id="fps-toggle">
+										<span class="slider"></span>
+									</div>
+									<span class="text-sm text-[var(--color-ink)]">Keep original framerate?</span>
+								</label>
+								<p class="text-[11px] text-[var(--color-mute)] mt-2 leading-tight">Keep the video's original framerate instead of reducing it for smaller file sizes.</p>
+							</div>
+
+							<div class="mt-8 pt-6 border-t border-[var(--color-hairline)]">
+								<label class="block text-xs font-semibold text-[var(--color-mute)] uppercase tracking-wider mb-2">Audio Track</label>
+								<div class="flex bg-[var(--color-canvas-soft)] p-1 rounded-lg border border-[var(--color-hairline)]">
+									<button type="button" class="seg-btn active flex-1 text-sm font-semibold rounded-md py-2 outline-none" data-group="audio" data-value="keep">Keep Audio</button>
+									<button type="button" class="seg-btn flex-1 text-sm font-semibold rounded-md py-2 outline-none" data-group="audio" data-value="remove">Remove Audio</button>
+								</div>
+								<p class="text-[11px] text-[var(--color-mute)] mt-2 leading-tight">Removing the audio track can save significant space on smaller files.</p>
+							</div>
+						</div>
+					</details>
+				</div>
+
+			</div>
+
+			<!-- ═══════════════════ FEATURES ROW ═══════════════════ -->
+			<div class="w-full max-w-3xl mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+				<div class="flex flex-col gap-3 p-5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)]">
+					<div class="w-9 h-9 rounded-lg bg-[var(--color-canvas-soft-2)] border border-[var(--color-hairline)] flex items-center justify-center">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)]"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+					</div>
+					<h3 class="text-sm font-semibold text-[var(--color-ink)]">Private & Secure Video Compressor</h3>
+					<p class="text-xs leading-relaxed text-[var(--color-mute)]">Files are processed entirely in your browser using WebAssembly. Unlike other online video compressors, nothing is ever uploaded to a server.</p>
+				</div>
+				<div class="flex flex-col gap-3 p-5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)]">
+					<div class="w-9 h-9 rounded-lg bg-[var(--color-canvas-soft-2)] border border-[var(--color-hairline)] flex items-center justify-center">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)]"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+					</div>
+					<h3 class="text-sm font-semibold text-[var(--color-ink)]">Lightning-Fast Compression</h3>
+					<p class="text-xs leading-relaxed text-[var(--color-mute)]">No upload wait times. This free video compressor starts instantly — all processing happens on your device.</p>
+				</div>
+				<div class="flex flex-col gap-3 p-5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)]">
+					<div class="w-9 h-9 rounded-lg bg-[var(--color-canvas-soft-2)] border border-[var(--color-hairline)] flex items-center justify-center">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)]"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+					</div>
+					<h3 class="text-sm font-semibold text-[var(--color-ink)]">No Limits, No Watermarks</h3>
+					<p class="text-xs leading-relaxed text-[var(--color-mute)]">Compress videos up to 5 GB with no daily limits, no watermarks, and no sign-up. The best free online video compressor.</p>
+				</div>
+			</div>
+		</div>
+	</main>
+
+
+	<!-- ═══════════════════ CLOUD SETUP GUIDE MODAL ═══════════════════ -->
+	<div id="setup-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display: none;">
+		<div id="setup-modal-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+		<div class="relative w-full max-w-lg bg-[var(--color-canvas)] rounded-2xl border border-[var(--color-hairline)] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.25)] p-6 md:p-8 max-h-[85vh] overflow-y-auto" style="animation: modalIn 200ms ease forwards;">
+			<button id="setup-modal-close" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-[var(--color-mute)] hover:text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] cursor-pointer outline-none sticky" style="transition: all 150ms ease;">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+			</button>
+
+			<div class="flex items-center gap-3 mb-6">
+				<div class="w-10 h-10 rounded-xl bg-[var(--color-canvas-soft-2)] border border-[var(--color-hairline)] flex items-center justify-center">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)]"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+				</div>
+				<div>
+					<h3 class="text-lg font-bold tracking-tight text-[var(--color-ink)]" id="setup-modal-title">Setup Required</h3>
+					<p class="text-xs text-[var(--color-mute)]" id="setup-modal-subtitle">Developer API key needed</p>
+				</div>
+			</div>
+
+			<div id="setup-modal-body" class="text-sm text-[var(--color-body)] space-y-4"></div>
+
+			<div class="flex items-center gap-3 pt-5 mt-5 border-t border-[var(--color-hairline)]">
+				<a id="setup-modal-link" href="#" target="_blank" rel="noopener" class="flex-1 flex items-center justify-center gap-2 bg-[var(--color-ink)] text-[var(--color-canvas)] px-6 py-3 rounded-xl font-semibold text-sm no-underline hover:opacity-90" style="transition: all 150ms ease;">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+					Open Developer Portal
+				</a>
+				<button id="setup-modal-dismiss" class="px-6 py-3 rounded-xl font-semibold text-sm text-[var(--color-mute)] hover:text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] cursor-pointer outline-none" style="transition: all 150ms ease;">Close</button>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- ═══════════════════════════════════════ SEO CONTENT SECTION ═══════════════════════════════════════ -->
+	<section class="w-full bg-[var(--color-canvas)] border-t border-[var(--color-hairline)] py-16 md:py-24 px-6" id="about">
+		<article class="max-w-3xl mx-auto text-[var(--color-body)] leading-relaxed">
+
+			<h2 class="text-3xl md:text-4xl font-bold tracking-[-0.03em] text-[var(--color-ink)] mb-6 leading-tight">
+				The Best Free Online Video Compressor — No Upload, No Watermark
+			</h2>
+
+			<p class="text-[15px] mb-5">
+				VideoCompressOnline is a <strong>free online video compressor</strong> that lets you reduce video file size up to 90% without losing noticeable quality. Unlike traditional tools like <strong>Handbrake video compressor</strong> or desktop software, this <strong>video compressor online</strong> tool works entirely inside your browser — there is nothing to download, install, or configure. Simply drag and drop your video file and let the compression engine do the rest. Whether you need an <strong>8MB video compressor</strong> for Discord, a <strong>10MB video compressor</strong> for email attachments, or need to shrink a large recording by several gigabytes, VideoCompressOnline handles it all.
+			</p>
+
+			<h3 class="text-xl font-bold text-[var(--color-ink)] mt-10 mb-4">
+				Why Choose This Free Video Compressor?
+			</h3>
+
+			<p class="text-[15px] mb-5">
+				Most <strong>online video compressor</strong> tools require you to upload your files to remote servers and wait for processing. That means slower speeds, privacy concerns, and often file-size limits of a few hundred megabytes. VideoCompressOnline is different. It runs a full video encoding engine (powered by FFmpeg and WebAssembly) directly on your device. Your videos never leave your computer — making it the most privacy-focused <strong>free video compressor</strong> available today. There are no daily usage limits, no mandatory sign-ups, and absolutely no watermarks added to your output files.
+			</p>
+
+			<p class="text-[15px] mb-5">
+				This <strong>video compressor app</strong> supports all popular video formats including <strong>MP4</strong>, WebM, MKV, MOV, AVI, and more. It outputs universally compatible MP4 files that play perfectly on every device and platform. With support for files up to <strong>5 GB</strong>, it is one of the most capable <strong>video compressor online free 5GB</strong> tools available — far surpassing the limits of alternatives like <strong>FreeConvert video compressor</strong> or <strong>VEED video compressor</strong> free tiers.
+			</p>
+
+			<h3 class="text-xl font-bold text-[var(--color-ink)] mt-10 mb-4">
+				Video Compressor for Discord — Compress Under 8MB or 10MB Instantly
+			</h3>
+
+			<p class="text-[15px] mb-5">
+				One of the most common reasons people search for a <strong>video compressor for Discord</strong> is Discord's strict file-size limit. Free Discord users can only upload files up to 8 MB, while Nitro users get a 25 MB or 50 MB limit. If you have a gameplay clip, meme video, or screen recording that's too large, this <strong>Discord video compressor</strong> makes it effortless to shrink your video below the limit. Simply set the target file size to 8 MB (or 10 MB, 25 MB — whatever you need) using the "Target a file size" compression mode, and the tool calculates the optimal bitrate automatically. The result is a perfectly sized video ready to share in your Discord server.
+			</p>
+
+			<h3 class="text-xl font-bold text-[var(--color-ink)] mt-10 mb-4">
+				Advanced Compression Options — MP4 Video Compressor With Full Control
+			</h3>
+
+			<p class="text-[15px] mb-5">
+				Beyond simple file-size targeting, this <strong>MP4 video compressor</strong> automatically chooses the best settings to give you full control over the output without the hassle. It uses optimized <strong>H.264</strong> video codecs and smart CRF-based encoding to reduce file sizes by up to 90%. It ensures maximum compatibility across all devices, acting like professional tools such as <strong>Handbrake video compressor</strong>, but with zero setup required.
+			</p>
+
+			<h3 class="text-xl font-bold text-[var(--color-ink)] mt-10 mb-4">
+				How It Works — Compress Video in 3 Simple Steps
+			</h3>
+
+			<ol class="text-[15px] mb-5 list-decimal list-inside space-y-2">
+				<li><strong>Upload your video</strong> — Drag and drop any MP4, WebM, MKV, or MOV file (up to 2 GB).</li>
+				<li><strong>Choose your settings</strong> — Pick a target file size (percentage or MB), select a codec, and configure audio preferences.</li>
+				<li><strong>Download the result</strong> — Your compressed video is ready in seconds. Click download and enjoy the smaller file.</li>
+			</ol>
+
+			<p class="text-[15px] mb-5">
+				Whether you are looking for a <strong>free online video compressor</strong> for everyday use, a <strong>video compressor discord</strong> tool for sharing clips with friends, or a powerful <strong>video compressor online free</strong> alternative to paid software — VideoCompressOnline delivers professional-grade results at zero cost. No installation, no account, no compromises. Start compressing your videos right now.
+			</p>
+
+		</article>
+	</section>
+
+	<!-- ═══════════════════════════════════════ FAQ SECTION ═══════════════════════════════════════ -->
+	<section class="w-full bg-[var(--color-canvas-soft)] border-t border-[var(--color-hairline)] py-16 md:py-24 px-6" id="faq">
+		<div class="max-w-3xl mx-auto">
+			<h2 class="text-3xl md:text-4xl font-bold tracking-[-0.03em] text-[var(--color-ink)] mb-10 text-center">
+				Frequently Asked Questions
+			</h2>
+
+			<div class="space-y-4">
+
+				<!-- FAQ 1 -->
+				<details class="group bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl overflow-hidden">
+					<summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none font-semibold text-[15px] text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden hover:bg-[var(--color-canvas-soft)]" style="transition: background-color 150ms ease;">
+						How to compress a video without losing quality?
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180 shrink-0 ml-4" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+					</summary>
+					<div class="px-6 pb-5 text-[14px] text-[var(--color-body)] leading-relaxed border-t border-[var(--color-hairline)]">
+						<p class="pt-4">To compress a video without losing quality, use a smart video compressor like VideoCompressOnline that uses <strong>CRF-based encoding</strong>. CRF (Constant Rate Factor) analyzes each frame and allocates just enough data to maintain visual quality while reducing file size. Set the compression target to around <strong>60–80%</strong> of the original size with the H.264 or H.265 codec. H.265 (HEVC) is especially effective — it can reduce file sizes by 20–75% compared to H.264 with virtually no visible quality loss. The key is to avoid aggressive bitrate reduction and let the encoder decide the optimal balance.</p>
+					</div>
+				</details>
+
+				<!-- FAQ 2 -->
+				<details class="group bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl overflow-hidden">
+					<summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none font-semibold text-[15px] text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden hover:bg-[var(--color-canvas-soft)]" style="transition: background-color 150ms ease;">
+						What video formats does the compressor work with?
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180 shrink-0 ml-4" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+					</summary>
+					<div class="px-6 pb-5 text-[14px] text-[var(--color-body)] leading-relaxed border-t border-[var(--color-hairline)]">
+						<p class="pt-4">VideoCompressOnline supports all major video formats including <strong>MP4, WebM, MKV, MOV, AVI, MPEG, OGG, and 3GP</strong>. You can upload any of these formats and the compressor will process them using the built-in FFmpeg engine. The compressed output is always delivered in the universally compatible <strong>MP4 format (H.264/AAC)</strong>, which works on every device, browser, and social media platform including Discord, WhatsApp, Instagram, and YouTube.</p>
+					</div>
+				</details>
+
+				<!-- FAQ 3 -->
+				<details class="group bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl overflow-hidden">
+					<summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none font-semibold text-[15px] text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden hover:bg-[var(--color-canvas-soft)]" style="transition: background-color 150ms ease;">
+						How to compress a video for email attachment?
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180 shrink-0 ml-4" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+					</summary>
+					<div class="px-6 pb-5 text-[14px] text-[var(--color-body)] leading-relaxed border-t border-[var(--color-hairline)]">
+						<p class="pt-4">Most email providers have a <strong>25 MB attachment limit</strong> (Gmail, Outlook, Yahoo). To compress a video for email, upload it to VideoCompressOnline, select <strong>25 MB</strong> under Target Size (or lower, depending on your email provider). The tool will automatically calculate the optimal bitrate to fit your video within that limit.</p>
+					</div>
+				</details>
+
+				<!-- FAQ 4 -->
+				<details class="group bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl overflow-hidden">
+					<summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none font-semibold text-[15px] text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden hover:bg-[var(--color-canvas-soft)]" style="transition: background-color 150ms ease;">
+						Can I preview the compressed video size before compression?
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180 shrink-0 ml-4" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+					</summary>
+					<div class="px-6 pb-5 text-[14px] text-[var(--color-body)] leading-relaxed border-t border-[var(--color-hairline)]">
+						<p class="pt-4">When you use the <strong>"Target a file size"</strong> compression mode (percentage or MB), you are essentially defining the output size upfront, so you know the approximate result before compression begins. For percentage mode, if your video is 100 MB and you set 40%, the output will be approximately 40 MB. For the MB mode, the output will match your target. The actual result may vary slightly due to how video encoding works, but it will be very close to the target you set.</p>
+					</div>
+				</details>
+
+				<!-- FAQ 5 -->
+				<details class="group bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl overflow-hidden">
+					<summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none font-semibold text-[15px] text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden hover:bg-[var(--color-canvas-soft)]" style="transition: background-color 150ms ease;">
+						Is it possible to compress videos when you are not connected to the internet?
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180 shrink-0 ml-4" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+					</summary>
+					<div class="px-6 pb-5 text-[14px] text-[var(--color-body)] leading-relaxed border-t border-[var(--color-hairline)]">
+						<p class="pt-4">VideoCompressOnline requires an internet connection only for the <strong>initial page load</strong>, during which the WebAssembly (WASM) engine and FFmpeg core files are downloaded to your browser. Once the page is fully loaded and the engine is cached, the actual video compression happens <strong>100% offline</strong> on your device. Your video files are never uploaded to any server. However, if you close the tab and reopen it without internet, the engine files may need to be re-downloaded. For fully offline compression, desktop tools like Handbrake are recommended.</p>
+					</div>
+				</details>
+
+				<!-- FAQ 6 -->
+				<details class="group bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl overflow-hidden">
+					<summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none font-semibold text-[15px] text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden hover:bg-[var(--color-canvas-soft)]" style="transition: background-color 150ms ease;">
+						Is it possible to compress videos on mobile devices?
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180 shrink-0 ml-4" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+					</summary>
+					<div class="px-6 pb-5 text-[14px] text-[var(--color-body)] leading-relaxed border-t border-[var(--color-hairline)]">
+						<p class="pt-4">Yes, VideoCompressOnline works on mobile devices including <strong>iPhones, iPads, and Android phones</strong>. Since it runs entirely in the browser using WebAssembly, there is no app to install. Simply open the website in Chrome, Safari, or Firefox on your mobile device, upload your video, and compress it. Keep in mind that mobile devices have less RAM and processing power than desktops, so very large files (over 500 MB–1 GB) may be slow or cause the browser to run out of memory. For best results on mobile, compress smaller video clips.</p>
+					</div>
+				</details>
+
+				<!-- FAQ 7 -->
+				<details class="group bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl overflow-hidden">
+					<summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none font-semibold text-[15px] text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden hover:bg-[var(--color-canvas-soft)]" style="transition: background-color 150ms ease;">
+						Is it possible to decompress a compressed video and obtain its original quality?
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180 shrink-0 ml-4" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+					</summary>
+					<div class="px-6 pb-5 text-[14px] text-[var(--color-body)] leading-relaxed border-t border-[var(--color-hairline)]">
+						<p class="pt-4">No, video compression is a <strong>lossy process</strong> — meaning some data is permanently discarded to reduce file size. Once a video is compressed, the removed data cannot be recovered. This is true for all video compressors, not just VideoCompressOnline. That is why it is important to always <strong>keep a backup of your original video file</strong> before compressing. If you need the original quality later, you will need to go back to your original uncompressed source file.</p>
+					</div>
+				</details>
+
+				<!-- FAQ 8 -->
+				<details class="group bg-[var(--color-canvas)] border border-[var(--color-hairline)] rounded-xl overflow-hidden">
+					<summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none font-semibold text-[15px] text-[var(--color-ink)] list-none [&::-webkit-details-marker]:hidden hover:bg-[var(--color-canvas-soft)]" style="transition: background-color 150ms ease;">
+						Which encoder is best for compressing video?
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--color-mute)] group-open:rotate-180 shrink-0 ml-4" style="transition: transform 250ms ease;"><path d="m6 9 6 6 6-6"/></svg>
+					</summary>
+					<div class="px-6 pb-5 text-[14px] text-[var(--color-body)] leading-relaxed border-t border-[var(--color-hairline)]">
+						<p class="pt-4">The two most popular encoders are <strong>H.264 (AVC)</strong> and <strong>H.265 (HEVC)</strong>. H.264 is the most widely compatible encoder — it works on virtually every device, browser, and platform. H.265 is the newer standard that delivers <strong>20–75% better compression ratios</strong> than H.264 at the same visual quality, making it ideal for high-resolution 4K video. For general use and maximum compatibility, H.264 is the best choice. For maximum compression with modern devices, H.265 is superior. VideoCompressOnline supports both encoders so you can choose based on your needs.</p>
+					</div>
+				</details>
+
+			</div>
+		</div>
+	</section>
+
+	<!-- ═══════════════════════════════════════ FOOTER ═══════════════════════════════════════ -->
+	<footer class="w-full border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] py-8 px-6 mt-auto">
+		<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[var(--color-mute)] gap-3">
+			<p>&copy; 2026 VideoCompressOnline — Free Online Video Compressor. Built for speed and privacy.</p>
+			<div class="flex gap-5">
+				<a href="/terms" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Terms</a>
+				<a href="/privacy" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Privacy</a>
+				<a href="/contact" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Contact</a>
+				<a href="/about" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">About</a>
+				<a href="#faq" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">FAQ</a>
+			</div>
+		</div>
+	</footer>
 </Layout>
+
+<!-- ═══════════════════════════════════════ STYLES ═══════════════════════════════════════ -->
+<style>
+	/* Segmented control buttons */
+	.seg-btn {
+		color: var(--mute);
+		background: transparent;
+		cursor: pointer;
+		transition: color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+	}
+	.seg-btn:hover {
+		color: var(--ink);
+	}
+	.seg-btn.active {
+		color: var(--on-primary);
+		background-color: var(--primary);
+		box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+	}
+
+	/* Dropdown items — light mode */
+	.dd-opt {
+		cursor: pointer;
+		color: var(--ink);
+		transition: background-color 100ms ease;
+	}
+	.dd-opt:hover {
+		background-color: var(--canvas-soft-2);
+	}
+	/* Dropdown items — dark mode: black bg, white text */
+	:global(.dark) .dd-opt {
+		color: #ffffff;
+		background-color: #000000;
+	}
+	:global(.dark) .dd-opt svg {
+		color: #ffffff;
+		opacity: 0.6;
+	}
+	:global(.dark) .dd-opt:hover {
+		background-color: #1a1a1a;
+	}
+
+	/* Modal animation */
+	@keyframes modalIn {
+		from { opacity: 0; transform: scale(0.96) translateY(8px); }
+		to { opacity: 1; transform: scale(1) translateY(0); }
+	}
+</style>
+
+<!-- ═══════════════════════════════════════ SCRIPTS ═══════════════════════════════════════ -->
+<script>
+	// ── Theme Toggle ──
+	const themeBtn = document.getElementById('theme-toggle');
+	const iconMoon = document.getElementById('icon-moon');
+	const iconSun = document.getElementById('icon-sun');
+	const themeLabel = document.getElementById('theme-label');
+
+	function syncThemeUI() {
+		const isDark = document.documentElement.classList.contains('dark');
+		if (iconMoon && iconSun && themeLabel) {
+			iconMoon.style.opacity = isDark ? '0' : '1';
+			iconMoon.style.transform = isDark ? 'rotate(-90deg) scale(0)' : 'rotate(0) scale(1)';
+			iconSun.style.opacity = isDark ? '1' : '0';
+			iconSun.style.transform = isDark ? 'rotate(0) scale(1)' : 'rotate(90deg) scale(0)';
+			themeLabel.textContent = isDark ? 'Light' : 'Dark';
+		}
+	}
+	syncThemeUI();
+
+	themeBtn?.addEventListener('click', () => {
+		const isDark = document.documentElement.classList.contains('dark');
+		document.documentElement.classList.toggle('dark');
+		localStorage.setItem('theme', isDark ? 'light' : 'dark');
+		syncThemeUI();
+	});
+
+
+	// ── Slider ↔ Input Sync (Removed) ──
+
+	// ── Segmented Buttons ──
+	document.querySelectorAll('.seg-btn').forEach(btn => {
+		btn.addEventListener('click', () => {
+			const group = btn.getAttribute('data-group');
+			document.querySelectorAll(`.seg-btn[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+		});
+	});
+
+	// ── Drag & Drop ──
+	const dropZone = document.getElementById('drop-zone');
+	const dragOverlay = document.getElementById('drag-overlay');
+	const fileInput = document.getElementById('file-input') as HTMLInputElement;
+
+	if (dropZone) {
+		['dragenter', 'dragover', 'dragleave', 'drop'].forEach(ev => {
+			dropZone.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); });
+			document.body.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); });
+		});
+
+		['dragenter', 'dragover'].forEach(ev => {
+			dropZone.addEventListener(ev, () => {
+				dropZone.style.borderColor = 'var(--ink)';
+				if (dragOverlay) dragOverlay.style.opacity = '1';
+			});
+		});
+
+		['dragleave', 'drop'].forEach(ev => {
+			dropZone.addEventListener(ev, () => {
+				dropZone.style.borderColor = '';
+				if (dragOverlay) dragOverlay.style.opacity = '0';
+			});
+		});
+
+		dropZone.addEventListener('drop', (e: DragEvent) => {
+			if (e.dataTransfer?.files) handleFiles(e.dataTransfer.files);
+		});
+	}
+
+	fileInput?.addEventListener('change', function() { if (this.files) handleFiles(this.files); });
+
+
+	// ── FFmpeg Integration ──
+	import { FFmpeg } from '@ffmpeg/ffmpeg';
+	import { fetchFile, toBlobURL } from '@ffmpeg/util';
+
+	const ffmpeg = new FFmpeg();
+	let isCompressing = false;
+
+	async function handleFiles(files: FileList) {
+		if (files.length === 0) return;
+		if (isCompressing) {
+			alert('Already compressing a video. Please wait.');
+			return;
+		}
+
+		const file = files[0];
+		const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+		console.log('Starting compression:', file.name, `${sizeMB} MB`);
+		
+		if (file.size > 5 * 1024 * 1024 * 1024) {
+			return;
+		}
+
+		isCompressing = true;
+		const dropZone = document.getElementById('drop-zone');
+		if (!dropZone) return;
+
+		// 1. Show Progress UI
+		dropZone.style.borderColor = 'var(--primary)';
+		dropZone.style.backgroundColor = 'var(--canvas)';
+		dropZone.innerHTML = `
+			<div class="flex flex-col items-center w-full max-w-sm py-4 z-10 relative">
+				<div class="w-12 h-12 rounded-full border-[3px] border-[var(--color-hairline-strong)] border-t-[var(--color-primary)] animate-spin mb-6"></div>
+				<h3 class="text-xl font-bold tracking-tight text-[var(--color-ink)] mb-2">Compressing...</h3>
+				<p class="text-sm font-medium text-[var(--color-mute)] mb-8" id="progress-text">Initializing engine</p>
+				
+				<div class="w-full h-2.5 bg-[var(--color-canvas-soft-2)] rounded-full overflow-hidden shadow-inner border border-[var(--color-hairline)] relative">
+					<div class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#007cf0] to-[#00dfd8] rounded-full" id="progress-bar" style="width: 0%; transition: width 0.3s ease;"></div>
+				</div>
+				<p class="text-xs font-mono text-[var(--color-mute)] mt-3" id="progress">0%</p>
+			</div>
+		`;
+
+		const progressText = document.getElementById('progress-text');
+		const progressBar = document.getElementById('progress-bar');
+		const pctText = document.getElementById('pct-text');
+
+		try {
+			// 2. Setup Progress Handler
+			ffmpeg.on('log', ({ message }) => console.log('FFmpeg:', message));
+			ffmpeg.on("progress", ({ progress, time }) => {
+			  const percent = Math.round(progress * 100);
+			  document.getElementById("progress").textContent = `${percent}%`;
+			});
+
+			// 3. Load FFmpeg (multi-threaded core)
+			// @ffmpeg/core-mt uses PThreads + SharedArrayBuffer for 2–4× faster
+			// encoding than the single-threaded @ffmpeg/core. Requires the
+			// page to be cross-origin isolated — see public/_headers (COOP + COEP).
+			// Artifacts are CDN-hosted here because the 31 MB wasm exceeds
+			// Cloudflare Pages' 25 MB per-file limit, so we can't bundle it.
+			if (!ffmpeg.loaded) {
+				if (progressText) progressText.innerText = 'Loading WebAssembly engine (~33 MB, one-time)...';
+				const CORE_BASE = "https://unpkg.com/@ffmpeg/core-mt@0.12.10/dist/umd";
+				const coreURL = await toBlobURL(`${CORE_BASE}/ffmpeg-core.js`, "text/javascript");
+				const wasmURL = await toBlobURL(`${CORE_BASE}/ffmpeg-core.wasm`, "application/wasm");
+				const workerURL = await toBlobURL(`${CORE_BASE}/ffmpeg-core.worker.js`, "text/javascript");
+				await ffmpeg.load({ coreURL, wasmURL, workerURL });
+			}
+
+			// 4. Mount the large file efficiently using WORKERFS (or fallback to MEMFS)
+			if (progressText) progressText.innerText = 'Mounting file...';
+			
+			let inputPath = '';
+			const inputDir = '/input_' + Date.now();
+			let usedWorkerFS = false;
+			try {
+				await ffmpeg.createDir(inputDir);
+				await ffmpeg.mount('WORKERFS' as any, { files: [file] }, inputDir);
+				inputPath = `${inputDir}/${file.name}`;
+				usedWorkerFS = true;
+			} catch (e) {
+				console.warn('WORKERFS mount failed, falling back to MEMFS:', e);
+				inputPath = `input_${Date.now()}.mp4`;
+				const buffer = await fetchFile(file);
+				await ffmpeg.writeFile(inputPath, buffer);
+			}
+
+			const outputPath = `output_${Date.now()}.mp4`;
+
+			// ── Probe the input for duration + FPS ──
+			// ffmpeg.wasm has no separate ffprobe, so we re-run ffmpeg with a
+			// NULL muxer and read the metadata it prints to stderr (captured by
+			// the 'log' event). A non-zero exit here is normal — we ignore it.
+			if (progressText) progressText.innerText = 'Analyzing video…';
+			let probeDuration = 0;   // seconds; 0 means "unknown"
+			let probeFps = 30;       // fallback FPS for the rare case the log
+			                        //   doesn't include an fps line
+			const probeHandler = ({ message }: { message: string }) => {
+				const dm = message.match(/Duration:\s*(\d+):(\d{1,2}):(\d+(?:\.\d+)?)/);
+				if (dm) {
+					const d = (+dm[1]) * 3600 + (+dm[2]) * 60 + parseFloat(dm[3]);
+					if (d > 0) probeDuration = d;
+				}
+				const fm = message.match(/(\d+(?:\.\d+)?)\s*fps\b/);
+				if (fm) {
+					const v = parseFloat(fm[1]);
+					if (v > 0 && v <= 240) probeFps = v;
+				}
+			};
+			ffmpeg.on('log', probeHandler);
+			try {
+				await ffmpeg.exec(['-hide_banner', '-i', inputPath, '-f', 'null', '-']);
+			} catch { /* expected on null output */ }
+			ffmpeg.off('log', probeHandler);
+
+			// ── Read the UI's chosen settings ──
+			const targetBtn = document.querySelector<HTMLElement>('.seg-btn.active[data-group="target-size"]');
+			const audioBtn = document.querySelector<HTMLElement>('.seg-btn.active[data-group="audio"]');
+			const fpsToggle = document.getElementById('fps-toggle') as HTMLInputElement | null;
+			const targetSizeMB = parseFloat(targetBtn?.getAttribute('data-value') || '25');
+			const keepAudio = audioBtn?.getAttribute('data-value') !== 'remove';
+			const keepFps = !!fpsToggle?.checked;
+
+			// ── Per-preset CRF (quality floor) ──
+			// Tighter targets get a higher CRF (more compression accepted).
+			// Combined with -b:v below, this gives libx264 both a quality
+			// floor and a bitrate cap — when the cap binds, you still get
+			// consistent quality; when the clip is short and the cap is
+			// generous, CRF keeps the file tight.
+			const CRF_TABLE: Record<string, number> = {
+				"8":   26, // small budget → heavier compression accepted
+				"25":  24,
+				"50":  22,
+				"100": 20,
+			};
+			const targetCrf = CRF_TABLE[String(targetSizeMB)] ?? 24;
+
+			// ── Compute a bitrate that fits the target size ──
+			// FFmpeg's actual output is always a little larger than the raw
+			// bit budget — there's muxing overhead, container metadata,
+			// private stream data, etc. Multiplying by EFFICIENCY (~0.85)
+			// compensates so the output lands near the chosen target
+			// instead of consistently overshooting (same trick compress.lol uses).
+			const AUDIO_BPS = 128_000;
+			const EFFICIENCY = 0.85;
+			const videoBitrateBps = (() => {
+				if (probeDuration <= 0) return 1_000_000; // unknown → default 1 Mbps
+				const rawBudgetBits = targetSizeMB * 1024 * 1024 * 8;
+				const audioTotalBits = (keepAudio ? AUDIO_BPS : 0) * probeDuration;
+				const videoBits = rawBudgetBits * EFFICIENCY - audioTotalBits;
+				const bps = videoBits / probeDuration;
+				// Clamp to [20 kbps, 50 Mbps] so libx264 doesn't choke on
+				// absurd values. Extreme cases (8 MB target on a long clip)
+				// will still overshoot the target even at the floor;
+				// trimming or "Remove Audio" brings it in line.
+				return Math.max(20_000, Math.min(bps, 50_000_000));
+			})();
+			const videoKbps = Math.max(1, Math.round(videoBitrateBps / 1000));
+
+			if (progressText) progressText.innerText =
+				`Targeting ${targetSizeMB} MB · ${keepAudio ? `audio + ${videoKbps} kbps video` : `video only · ${videoKbps} kbps`}`;
+
+			// ── Build the encode args ──
+			// -crf    : per-preset quality floor.
+			// -b:v    : average bitrate cap sized to the chosen target.
+			// -maxrate / -bufsize : VBV constraint so x264 can't bloat a
+			//                       single scene and starve the rest.
+			// -pix_fmt yuv420p : broad playback compatibility (Discord,
+			//                    QuickTime preview, older players).
+			const args: string[] = [
+				'-y',
+				'-i', inputPath,
+				'-c:v', 'libx264',
+				'-preset', 'fast',
+				'-crf', String(targetCrf),
+				'-b:v', `${videoKbps}k`,
+				'-maxrate', `${Math.max(1, Math.round(videoKbps * 1.2))}k`,
+				'-bufsize', `${Math.max(2, Math.round(videoKbps * 2))}k`,
+				'-pix_fmt', 'yuv420p',
+			];
+			if (keepAudio) {
+				args.push('-c:a', 'aac', '-b:a', '128k');
+			} else {
+				args.push('-an'); // drop the audio track
+			}
+			if (keepFps) {
+				args.push('-r', probeFps.toFixed(3)); // preserve original FPS
+			}
+			args.push('-movflags', '+faststart', outputPath); // web-optimized MP4
+
+			await ffmpeg.exec(args);
+
+			if (progressText) progressText.innerText = 'Finalizing output...';
+			const data = await ffmpeg.readFile(outputPath) as Uint8Array;
+			
+			if (usedWorkerFS) {
+				await ffmpeg.unmount(inputDir);
+				await ffmpeg.deleteDir(inputDir);
+			} else {
+				await ffmpeg.deleteFile(inputPath);
+			}
+			await ffmpeg.deleteFile(outputPath);
+			
+			// 8. Generate Download Link
+			const blob = new Blob([data.buffer], { type: "video/mp4" });
+			const url = URL.createObjectURL(blob);
+			const newSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
+
+			const downloadName = `compressed_${file.name.replace(/\.[^/.]+$/, '')}.mp4`;
+
+			dropZone.innerHTML = `
+				<div class="flex flex-col items-center z-10 relative">
+					<div class="w-16 h-16 rounded-full bg-emerald-100 border-4 border-emerald-50 flex items-center justify-center mb-6 shadow-sm">
+						<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+					</div>
+					<h3 class="text-2xl font-bold tracking-tight text-[var(--color-ink)] mb-2">Compression Complete!</h3>
+					<p class="text-[15px] font-medium text-[var(--color-mute)] mb-8 bg-[var(--color-canvas-soft-2)] px-4 py-1.5 rounded-full border border-[var(--color-hairline)]">
+						Reduced from <span class="font-bold text-[var(--color-ink)]">${sizeMB} MB</span> to <span class="font-bold text-emerald-600">${newSizeMB} MB</span>
+					</p>
+					
+					<a href="${url}" download="${downloadName}" class="flex items-center gap-2 bg-[var(--color-ink)] text-[var(--color-canvas)] px-8 py-3.5 rounded-full font-semibold shadow-lg hover:opacity-90 hover:scale-[1.02]" style="transition: all 200ms ease;">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+						Download Video
+					</a>
+					<button class="mt-6 text-[15px] font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" onclick="location.reload()">
+						Compress another file
+					</button>
+				</div>
+			`;
+		} catch (error: any) {
+			console.error('Compression failed:', error);
+			const errorMsg = error?.message || String(error);
+			dropZone.innerHTML = `
+				<div class="flex flex-col items-center z-10 relative">
+					<div class="w-16 h-16 rounded-full bg-red-100 border-4 border-red-50 flex items-center justify-center mb-6 shadow-sm">
+						<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+					</div>
+					<h3 class="text-2xl font-bold tracking-tight text-[var(--color-ink)] mb-3">Compression Failed</h3>
+					<p class="text-[14px] text-[var(--color-mute)] mb-6 text-center max-w-[250px]">Something went wrong during processing.</p>
+					<button class="bg-[var(--color-ink)] text-[var(--color-canvas)] px-8 py-3.5 rounded-full font-semibold shadow-lg hover:opacity-90" onclick="location.reload()">
+						Try Again
+					</button>
+				</div>
+			`;
+		} finally {
+			isCompressing = false;
+		}
+	}
+</script>

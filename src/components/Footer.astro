@@ -1,0 +1,23 @@
+---
+// Site footer — single source of truth across pages.
+interface Props {
+	variant?: "home" | "subpage";
+}
+const { variant = "home" } = Astro.props;
+
+// The FAQ anchor only resolves on the home page; subpages fall back to /#faq.
+const faqHref = variant === "home" ? "#faq" : "/#faq";
+---
+
+<footer class="w-full border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] py-8 px-6 mt-auto">
+	<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[var(--color-mute)] gap-3">
+		<p data-i18n="footer.copyright">&copy; 2026 VideoCompressOnline — Free Online Video Compressor. Built for speed and privacy</p>
+		<div class="flex gap-5">
+			<a href="/terms" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.terms">Terms</a>
+			<a href="/privacy" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.privacy">Privacy</a>
+			<a href="/contact" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.contact">Contact</a>
+			<a href="/about" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.about">About</a>
+			<a href={faqHref} class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.faq">FAQ</a>
+		</div>
+	</div>
+</footer>

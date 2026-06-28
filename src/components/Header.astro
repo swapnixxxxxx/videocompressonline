@@ -1,0 +1,138 @@
+---
+// Single source of truth for the site header.
+// Two variants:
+//   variant="home"    — used on the marketing hero (no "Back to Home" link)
+//   variant="subpage" — used on about / contact / privacy / terms (shows the link)
+//
+// Includes:
+//   - Theme cycle button (cycles Light → Dark → Ocean → Sepia → Solar → Light)
+//   - Language dropdown (6 languages, single dictionary per language)
+// Both controls are wired by src/scripts/personalize.ts.
+
+import { LANGS, LANG_LABELS, LANG_DIR, THEMES, THEME_LABELS } from "../i18n/index";
+
+interface Props {
+	variant?: "home" | "subpage";
+}
+
+const { variant = "home" } = Astro.props;
+---
+
+<header
+	class="w-full bg-[var(--color-canvas)]/80 backdrop-blur-xl border-b border-[var(--color-hairline)] h-16 flex items-center sticky top-0 z-50"
+>
+	<div class="max-w-6xl mx-auto w-full px-4 md:px-6 flex items-center justify-between gap-3">
+		<a href="/" class="flex items-center gap-2.5 group shrink-0">
+			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-[var(--color-ink)]">
+				<path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.15" />
+				<path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+			</svg>
+			<span class="font-bold text-[15px] tracking-[-0.3px] text-[var(--color-ink)]">VideoCompressOnline</span>
+		</a>
+
+		<div class="flex items-center gap-2 md:gap-3">
+			{variant === "subpage" && (
+				<a
+					href="/"
+					class="hidden sm:inline text-sm font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]"
+					style="transition: color 150ms ease;"
+					data-i18n="nav.backHome"
+				>
+					Back to Home
+				</a>
+			)}
+
+			<!-- Theme cycle -->
+			<button
+				id="theme-toggle"
+				type="button"
+				class="flex items-center gap-2 px-3 md:px-3.5 py-2 rounded-full border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] text-sm font-medium cursor-pointer outline-none active:scale-95"
+				style="transition: border-color 200ms ease, transform 100ms ease;"
+				aria-label="Cycle theme"
+				title="Cycle theme"
+			>
+				<span id="theme-icon" class="inline-flex w-4 h-4 items-center justify-center</span>
+				<span id="theme-label" class="hidden sm:inline select-none">Light</span>
+			</button>
+
+			<!-- Language dropdown -->
+			<div class="relative" id="lang-wrap">
+				<button
+					id="lang-toggle"
+					type="button"
+					class="flex items-center gap-1.5 px-3 py-2 rounded-full border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] text-sm font-medium cursor-pointer outline-none active:scale-95"
+					style="transition: border-color 200ms ease, transform 100ms ease;"
+					aria-haspopup="listbox"
+					aria-expanded="false"
+					title="Language"
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<circle cx="12" cy="12" r="10" />
+						<path d="M2 12h20" />
+						<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+					</svg>
+					<span id="lang-current" class="select-none font-mono text-[13px] tracking-wider">EN</span>
+					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transition: transform 200ms ease;">
+						<path d="m6 9 6 6 6-6" />
+					</svg>
+				</button>
+
+				<ul
+					id="lang-menu"
+					role="listbox"
+					class="hidden absolute end-0 top-full mt-2 min-w-[180px] rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] p-1 z-[60] backdrop-blur-xl"
+					style="box-shadow: 0 8px 32px -4px rgba(0,0,0,0.25), 0 0 0 1px var(--hairline);"
+				>
+					{LANGS.map((code) => (
+						<li>
+							<button
+								type="button"
+								data-lang-option={code}
+								dir={LANG_DIR[code]}
+								class="lang-opt w-full flex items-center justify-between gap-3 px-3 py-2 text-sm rounded-lg outline-none text-start"
+								data-active={code === "en" ? "true" : "false"}
+							>
+								<span class="font-medium text-[var(--color-ink)]">{LANG_LABELS[code]</span>
+								<span class="text-[11px] font-mono uppercase tracking-wider text-[var(--color-mute)]">{code</span>
+							</button>
+						</li>
+					))}
+				</ul>
+			</div>
+		</div>
+	</div>
+</header>
+
+<!-- (Hidden theme list — reserved for a future "themes menu" mode. Quick Anchor of intended use.)
+{LANGS.map(...)}
+{THEMES.map(...)}
+{LANG_LABELS}
+{THEME_LABELS}
+-->
+
+<style>
+	/* Selected item in the language dropdown. */
+	.lang-opt {
+		cursor: pointer;
+		transition: background-color 100ms ease, color 100ms ease;
+	}
+	.lang-opt:hover {
+		background-color: var(--color-canvas-soft-2);
+	}
+	.lang-opt[data-active="true"] {
+		background-color: var(--color-canvas-soft-2);
+		color: var(--color-ink);
+	}
+	.lang-opt[data-active="true"] > span:first-child {
+		font-weight: 600;
+	}
+	.lang-opt[data-active="true"] > span:last-child {
+		color: var(--color-ink);
+	}
+
+	/* Rotate the chevron when menu opens. The personalize script keeps
+	   aria-expanded in sync; we use the CSS sibling trick for the visual cue. */
+	#lang-toggle[aria-expanded="true"] > svg:last-child {
+		transform: rotate(180deg);
+	}
+</style>

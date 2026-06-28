@@ -1,0 +1,235 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-mute: var(--mute);
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+  --color-canvas: var(--canvas);
+  --color-canvas-soft: var(--canvas-soft);
+  --color-canvas-soft-2: var(--canvas-soft-2);
+  --color-link: #0070f3;
+  --color-success: #0070f3;
+  --color-error: #ee0000;
+
+  --font-sans: "Geist", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* Apple-style dark variant: triggers on `.dark` class OR any of the dark themes. */
+  --variant-dark: (&:where(.dark, [data-theme="dark"] *, [data-theme="ocean"] *, [data-theme="solar"] *));
+}
+@custom-variant dark (&:where(.dark, [data-theme="dark"], [data-theme="ocean"], [data-theme="solar"]));
+
+/* ─── LIGHT ─────────────────────────────────────────── Stark white / near-black, Vercel voice */
+:root,
+[data-theme="light"] {
+  --primary: #171717;
+  --on-primary: #ffffff;
+  --ink: #171717;
+  --body: #444444;
+  --mute: #888888;
+  --hairline: #eaeaea;
+  --hairline-strong: #999999;
+  --canvas: #ffffff;
+  --canvas-soft: #fafafa;
+  --canvas-soft-2: #f5f5f5;
+}
+
+/* ─── DARK ──────────────────────────────────────────── Stark black / off-white */
+[data-theme="dark"] {
+  --primary: #ededed;
+  --on-primary: #0a0a0a;
+  --ink: #ededed;
+  --body: #a1a1a1;
+  --mute: #666666;
+  --hairline: #333333;
+  --hairline-strong: #555555;
+  --canvas: #0a0a0a;
+  --canvas-soft: #141414;
+  --canvas-soft-2: #1e1e1e;
+}
+
+/* ─── OCEAN ─────────────────────────────────────────── Cool blue dark — premium midnight */
+[data-theme="ocean"] {
+  --primary: #7dd3fc;
+  --on-primary: #08111c;
+  --ink: #e0f2fe;
+  --body: #93c5fd;
+  --mute: #64748b;
+  --hairline: #1e3a5f;
+  --hairline-strong: #4974a3;
+  --canvas: #0c1e2e;
+  --canvas-soft: #11293f;
+  --canvas-soft-2: #163352;
+}
+
+/* ─── SEPIA ─────────────────────────────────────────── Warm cream light — easy on the eyes */
+[data-theme="sepia"] {
+  --primary: #5b4636;
+  --on-primary: #fbf3e3;
+  --ink: #3b2c20;
+  --body: #6b5547;
+  --mute: #9b8771;
+  --hairline: #d8c8ad;
+  --hairline-strong: #b69b7a;
+  --canvas: #fbf3e3;
+  --canvas-soft: #f3e9d5;
+  --canvas-soft-2: #ebddc1;
+}
+
+/* ─── SOLAR ─────────────────────────────────────────── Warm purple dark — rich, dramatic */
+[data-theme="solar"] {
+  --primary: #c084fc;
+  --on-primary: #14081f;
+  --ink: #e9d5ff;
+  --body: #c4b5fd;
+  --mute: #8a7aa8;
+  --hairline: #2e1a47;
+  --hairline-strong: #5a3f80;
+  --canvas: #150a26;
+  --canvas-soft: #1d1032;
+  --canvas-soft-2: #25163e;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@layer base {
+  * {
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: 300ms;
+    transition-timing-function: ease;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+  }
+
+  ::selection {
+    background-color: var(--primary);
+    color: var(--on-primary);
+  }
+}
+
+/* Custom range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--hairline);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  cursor: pointer;
+  border: 2px solid var(--canvas);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  cursor: pointer;
+  border: 2px solid var(--canvas);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Toggle switch */
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggle-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--hairline-strong);
+  border-radius: 9999px;
+  transition: background-color 200ms ease;
+}
+.toggle-switch .slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 200ms ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+.toggle-switch input:checked + .slider {
+  background-color: #0070f3;
+}
+.toggle-switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Smooth details/summary animation */
+details summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Dropdown bridge for hover gap */
+.upload-group::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}

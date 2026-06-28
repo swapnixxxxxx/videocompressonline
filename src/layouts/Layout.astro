@@ -1,23 +1,213 @@
+---
+interface Props {
+	title?: string;
+	description?: string;
+	canonicalURL?: string;
+}
+
+const {
+	title = "Video Compressor Online Free — Compress Video to 8MB, 10MB, 25MB | No Upload",
+	description = "Free online video compressor — reduce MP4 file size up to 90% directly in your browser. Best video compressor for Discord (8MB), email, and social media. No upload, no watermark, supports files up to 5GB. Works like Handbrake & FreeConvert but 100% private.",
+	canonicalURL = "https://videocompressonline.com",
+} = Astro.props;
+
+const siteName = "VideoCompressOnline";
+const ogImageURL = "https://videocompressonline.com/og-image.jpg";
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="en" class="overflow-x-hidden">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+
+		<!-- ═══════════ PRIMARY SEO META ═══════════ -->
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalURL} />
+		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+		<meta name="keywords" content="video compressor, video compressor online, free video compressor, online video compressor, video compressor free, video compressor for discord, discord video compressor, 8mb video compressor, 10mb video compressor, handbrake video compressor, freeconvert video compressor, video compressor online free, free online video compressor, video compressor app, veed video compressor, mp4 video compressor, best video compressor, video compressor online free 5gb, compress video, reduce video file size, compress mp4" />
+		<meta name="author" content="VideoCompressOnline" />
+
+		<!-- ═══════════ OPEN GRAPH / FACEBOOK ═══════════ -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImageURL} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="VideoCompressOnline — Free Online Video Compressor" />
+		<meta property="og:site_name" content={siteName} />
+		<meta property="og:locale" content="en_US" />
+
+		<!-- ═══════════ TWITTER CARD ═══════════ -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageURL} />
+		<meta name="twitter:image:alt" content="VideoCompressOnline — Free Online Video Compressor" />
+
+		<!-- ═══════════ STRUCTURED DATA (JSON-LD) ═══════════ -->
+		<script type="application/ld+json" set:html={JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "WebApplication",
+			"name": "VideoCompressOnline — Free Online Video Compressor",
+			"url": "https://videocompressonline.com",
+			"description": "Free online video compressor that reduces video file size up to 90% directly in your browser. Supports MP4, WebM, MKV, MOV files up to 5GB. No upload required, 100% private.",
+			"applicationCategory": "MultimediaApplication",
+			"operatingSystem": "Any (Browser-based)",
+			"offers": {
+				"@type": "Offer",
+				"price": "0",
+				"priceCurrency": "USD"
+			},
+			"featureList": [
+				"Compress MP4, WebM, MKV, MOV videos",
+				"Reduce video size up to 90%",
+				"Client-side processing — no uploads",
+				"Support for files up to 5GB",
+				"Discord-compatible 8MB and 10MB compression",
+				"H.264 and H.265/HEVC codec support",
+				"No watermarks, no sign-up required"
+			],
+			"browserRequirements": "Requires a modern browser with WebAssembly support",
+			"softwareVersion": "1.0",
+			"creator": {
+				"@type": "Organization",
+				"name": "VideoCompressOnline",
+				"url": "https://videocompressonline.com"
+			}
+		})} />
+
+		<!-- ═══════════ FAQ STRUCTURED DATA ═══════════ -->
+		<script type="application/ld+json" set:html={JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "FAQPage",
+			"mainEntity": [
+				{
+					"@type": "Question",
+					"name": "How to compress a video without losing quality?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "To compress a video without losing quality, use a smart video compressor like VideoCompressOnline that uses CRF-based encoding. CRF (Constant Rate Factor) analyzes each frame and allocates just enough data to maintain visual quality while reducing file size. Set the compression target to around 60–80% of the original size with the H.264 or H.265 codec. H.265 (HEVC) is especially effective — it can reduce file sizes by 20–75% compared to H.264 with virtually no visible quality loss. The key is to avoid aggressive bitrate reduction and let the encoder decide the optimal balance."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "What video formats does the compressor work with?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "VideoCompressOnline supports all major video formats including MP4, WebM, MKV, MOV, AVI, MPEG, OGG, and 3GP. You can upload any of these formats and the compressor will process them using the built-in FFmpeg engine. The compressed output is always delivered in the universally compatible MP4 format (H.264/AAC), which works on every device, browser, and social media platform including Discord, WhatsApp, Instagram, and YouTube."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "How to compress a video for email attachment?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "Most email providers have a 25 MB attachment limit (Gmail, Outlook, Yahoo). To compress a video for email, upload it to VideoCompressOnline, open Advanced Settings, change the Compression Mode to 'Target a file size (MB)', and enter 25 (or lower, depending on your email provider). The tool will automatically calculate the optimal bitrate to fit your video within that limit. For very long videos, you may also want to remove the audio track or lower the resolution to achieve smaller file sizes while keeping the video watchable."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "Can I preview the compressed video size before compression?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "When you use the 'Target a file size' compression mode (percentage or MB), you are essentially defining the output size upfront, so you know the approximate result before compression begins. For percentage mode, if your video is 100 MB and you set 40%, the output will be approximately 40 MB. For the MB mode, the output will match your target. The actual result may vary slightly due to how video encoding works, but it will be very close to the target you set."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "Is it possible to compress videos when you are not connected to the internet?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "VideoCompressOnline requires an internet connection only for the initial page load, during which the WebAssembly (WASM) engine and FFmpeg core files are downloaded to your browser. Once the page is fully loaded and the engine is cached, the actual video compression happens 100% offline on your device. Your video files are never uploaded to any server. However, if you close the tab and reopen it without internet, the engine files may need to be re-downloaded. For fully offline compression, desktop tools like Handbrake are recommended."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "Is it possible to compress videos on mobile devices?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "Yes, VideoCompressOnline works on mobile devices including iPhones, iPads, and Android phones. Since it runs entirely in the browser using WebAssembly, there is no app to install. Simply open the website in Chrome, Safari, or Firefox on your mobile device, upload your video, and compress it. Keep in mind that mobile devices have less RAM and processing power than desktops, so very large files (over 500 MB–1 GB) may be slow or cause the browser to run out of memory. For best results on mobile, compress smaller video clips."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "Is it possible to decompress a compressed video and obtain its original quality?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "No, video compression is a lossy process — meaning some data is permanently discarded to reduce file size. Once a video is compressed, the removed data cannot be recovered. This is true for all video compressors, not just VideoCompressOnline. That is why it is important to always keep a backup of your original video file before compressing. If you need the original quality later, you will need to go back to your original uncompressed source file."
+					}
+				},
+				{
+					"@type": "Question",
+					"name": "Which encoder is best for compressing video?",
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "The two most popular encoders are H.264 (AVC) and H.265 (HEVC). H.264 is the most widely compatible encoder — it works on virtually every device, browser, and platform. H.265 is the newer standard that delivers 20–75% better compression ratios than H.264 at the same visual quality, making it ideal for high-resolution 4K video. For general use and maximum compatibility, H.264 is the best choice. For maximum compression with modern devices, H.265 is superior. VideoCompressOnline supports both encoders so you can choose based on your needs."
+					}
+				}
+			]
+		})} />
+
+		<script is:inline>
+			// ─── Pre-hydration: apply saved theme + language before paint ───
+			// Runs synchronously in <head> so visitors never see a flash of
+			// light/dark or a language flicker. All errors fall through to
+			// the SSR defaults; nothing here throws past the catch.
+			(function () {
+				var h = document.documentElement;
+				var THEMES = ['light', 'dark', 'ocean', 'sepia', 'solar'];
+				var DARK_THEMES = ['dark', 'ocean', 'solar'];
+				var LANGS = { en: 'ltr', es: 'ltr', fr: 'ltr', de: 'ltr', pt: 'ltr', ar: 'rtl' };
+				try {
+					// Theme
+					var t = null;
+					try { t = localStorage.getItem('theme'); } catch (e) {}
+					if (!t || THEMES.indexOf(t) === -1) {
+						t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+					}
+					h.setAttribute('data-theme', t);
+					if (DARK_THEMES.indexOf(t) !== -1) h.classList.add('dark');
+
+					// Language
+					var saved = null;
+					try { saved = localStorage.getItem('lang'); } catch (e) {}
+					var navLang = (navigator.language || 'en').slice(0, 2).toLowerCase();
+					var l = LANGS[saved] ? saved : (LANGS[navLang] ? navLang : 'en');
+					h.setAttribute('lang', l);
+					h.setAttribute('dir', LANGS[l]);
+				} catch (e) {
+					/* SSR defaults already render */
+				}
+			})();
+		</script>
+
+		<!-- Post-hydration: wires the theme cycle + language dropdown. -->
+		<script>
+			import '../scripts/personalize.ts';
+		</script>
+
+		<!-- Google tag (gtag.js) -->
+		<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-BHTLH3RXD5"></script>
+		<script is:inline>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+
+		  gtag('config', 'G-BHTLH3RXD5');
+		</script>
 	</head>
-	<body>
+	<body class="antialiased min-h-screen flex flex-col overflow-x-hidden w-full max-w-[100vw]">
 		<slot />
 	</body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+	@import "../styles/global.css";
 </style>
