@@ -44,16 +44,16 @@ import Footer from '../components/Footer.astro';
 					<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
 					<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
 				</span>
-				100% Client-Side &middot; Videos never leave your device
+				Secure &amp; Private &middot; Up to 2 GB &middot; Auto-deleted files
 			</div>
 
 			<h1 class="text-[clamp(2.5rem,6vw,4.5rem)] font-bold tracking-[-0.04em] text-[var(--color-ink)] mb-5 leading-[1.05]">
 				Free Online Video Compressor<br/>
-				<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#007cf0] via-[#00b4d8] to-[#00dfd8]">Fast. Private. No Upload.</span>
+				<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#007cf0] via-[#00b4d8] to-[#00dfd8]">Fast. Private. Up to 2 GB.</span>
 			</h1>
 
 			<p class="text-lg leading-relaxed text-[var(--color-body)] max-w-xl mb-14">
-				Compress MP4 videos up to 90% smaller — directly in your browser.<br class="hidden md:block" />
+				Compress MP4 videos up to 90% smaller with fast streaming compression.<br class="hidden md:block" />
 				Best free video compressor for Discord, email, and social media. Up to 2 GB, no watermarks.
 			</p>
 
@@ -493,252 +493,331 @@ import Footer from '../components/Footer.astro';
 	fileInput?.addEventListener('change', function() { if (this.files) handleFiles(this.files); });
 
 
-	// ── FFmpeg Integration ──
-	import { FFmpeg } from '@ffmpeg/ffmpeg';
-	import { fetchFile, toBlobURL } from '@ffmpeg/util';
+	// ── Chunked Upload & Server Streaming Compression Integration ──
+	let isProcessing = false;
 
-	const ffmpeg = new FFmpeg();
-	let isCompressing = false;
+	function formatBytes(bytes: number, decimals = 2): string {
+		if (bytes <= 0) return '0 B';
+		const k = 1024;
+		const dm = decimals < 0 ? 0 : decimals;
+		const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+		const i = Math.floor(Math.log(bytes) / Math.log(k));
+		return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+	}
+
+	function formatEta(seconds: number): string {
+		if (!isFinite(seconds) || seconds <= 0) return 'Estimating…';
+		if (seconds < 60) return `About ${Math.ceil(seconds)}s remaining`;
+		const mins = Math.floor(seconds / 60);
+		const secs = Math.ceil(seconds % 60);
+		return `About ${mins}m ${secs}s remaining`;
+	}
+
+	function showError(zone: HTMLElement, title: string, detail: string) {
+		zone.style.borderColor = '#ef4444';
+		zone.innerHTML = `
+			<div class="flex flex-col items-center z-10 relative text-center max-w-md py-4">
+				<div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-950/40 border-4 border-red-50 dark:border-red-900/30 flex items-center justify-center mb-5 shadow-sm">
+					<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+				</div>
+				<h3 class="text-2xl font-bold tracking-tight text-[var(--color-ink)] mb-2">${title}</h3>
+				<p class="text-[14px] text-[var(--color-mute)] mb-6 leading-relaxed px-4">${detail}</p>
+				<button class="bg-[var(--color-ink)] text-[var(--color-canvas)] px-8 py-3.5 rounded-full font-semibold shadow-lg hover:opacity-90 cursor-pointer" style="transition: opacity 150ms ease;" onclick="location.reload()">
+					Try Again
+				</button>
+			</div>
+		`;
+	}
 
 	async function handleFiles(files: FileList) {
 		if (files.length === 0) return;
-		if (isCompressing) {
-			alert('Already compressing a video. Please wait.');
+		if (isProcessing) {
+			alert('A video is already being processed. Please wait.');
 			return;
 		}
 
 		const file = files[0];
-		const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-		console.log('Starting compression:', file.name, `${sizeMB} MB`);
-		
-		if (file.size > 5 * 1024 * 1024 * 1024) {
-			return;
-		}
+		const maxAllowed = 2 * 1024 * 1024 * 1024; // 2 GB
 
-		isCompressing = true;
 		const dropZone = document.getElementById('drop-zone');
 		if (!dropZone) return;
 
-		// 1. Show Progress UI
+		if (file.size > maxAllowed) {
+			showError(
+				dropZone,
+				'File Too Large',
+				`Your video is ${formatBytes(file.size)}. The maximum supported video size is 2 GB. Please select a video up to 2 GB.`
+			);
+			return;
+		}
+
+		if (file.size < 1024) {
+			showError(
+				dropZone,
+				'Invalid File',
+				'The selected file is too small or empty. Please select a valid video.'
+			);
+			return;
+		}
+
+		// Capture settings BEFORE replacing DOM
+		const targetBtn = document.querySelector<HTMLElement>('.seg-btn.active[data-group="target-size"]');
+		const audioBtn  = document.querySelector<HTMLElement>('.seg-btn.active[data-group="audio"]');
+		const fpsToggle = document.getElementById('fps-toggle') as HTMLInputElement | null;
+		const targetSizeMB = parseFloat(targetBtn?.getAttribute('data-value') || '25');
+		const keepAudio    = audioBtn?.getAttribute('data-value') !== 'remove';
+		const keepFps      = !!fpsToggle?.checked;
+
+		isProcessing = true;
+
+		// Render Uploading Progress Card
 		dropZone.style.borderColor = 'var(--primary)';
 		dropZone.style.backgroundColor = 'var(--canvas)';
 		dropZone.innerHTML = `
-			<div class="flex flex-col items-center w-full max-w-sm py-4 z-10 relative">
-				<div class="w-12 h-12 rounded-full border-[3px] border-[var(--color-hairline-strong)] border-t-[var(--color-primary)] animate-spin mb-6"></div>
-				<h3 class="text-xl font-bold tracking-tight text-[var(--color-ink)] mb-2">Compressing...</h3>
-				<p class="text-sm font-medium text-[var(--color-mute)] mb-8" id="progress-text">Initializing engine</p>
-				
-				<div class="w-full h-2.5 bg-[var(--color-canvas-soft-2)] rounded-full overflow-hidden shadow-inner border border-[var(--color-hairline)] relative">
-					<div class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#007cf0] to-[#00dfd8] rounded-full" id="progress-bar" style="width: 0%; transition: width 0.3s ease;"></div>
+			<div class="flex flex-col items-center w-full max-w-md py-2 z-10 relative">
+				<div class="w-12 h-12 rounded-full border-[3px] border-[var(--color-hairline-strong)] border-t-[var(--color-primary)] animate-spin mb-4" id="status-spinner"></div>
+				<h3 class="text-xl font-bold tracking-tight text-[var(--color-ink)] mb-1" id="process-title">Uploading video…</h3>
+				<p class="text-xs font-medium text-[var(--color-mute)] mb-5 max-w-sm truncate text-center" id="process-subtitle">${file.name} · ${formatBytes(file.size)}</p>
+
+				<div class="w-full h-2.5 bg-[var(--color-canvas-soft-2)] rounded-full overflow-hidden shadow-inner border border-[var(--color-hairline)] relative mb-3">
+					<div class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#007cf0] via-[#00b4d8] to-[#00dfd8] rounded-full" id="main-progress-bar" style="width: 0%; transition: width 0.2s ease;"></div>
 				</div>
-				<p class="text-xs font-mono text-[var(--color-mute)] mt-3" id="progress">0%</p>
+
+				<div class="w-full flex items-center justify-between text-xs font-mono text-[var(--color-ink)] mb-4">
+					<span id="progress-pct" class="font-bold text-sm">0%</span>
+					<span id="progress-bytes" class="text-[var(--color-mute)]">0 B / ${formatBytes(file.size)}</span>
+				</div>
+
+				<div class="w-full grid grid-cols-2 gap-3 text-xs bg-[var(--color-canvas-soft-2)] border border-[var(--color-hairline)] rounded-xl p-3 mb-3" id="speed-eta-panel">
+					<div class="flex flex-col text-left">
+						<span class="text-[10px] text-[var(--color-mute)] uppercase tracking-wider font-semibold">Speed</span>
+						<span class="font-mono font-medium text-[var(--color-ink)]" id="upload-speed">0.0 MB/s</span>
+					</div>
+					<div class="flex flex-col text-right">
+						<span class="text-[10px] text-[var(--color-mute)] uppercase tracking-wider font-semibold">Time Remaining</span>
+						<span class="font-mono font-medium text-[var(--color-ink)]" id="upload-eta">Estimating…</span>
+					</div>
+				</div>
+
+				<p class="text-[11px] text-[var(--color-mute)] text-center" id="status-detail">
+					Chunked streaming upload active &middot; Browser memory safe
+				</p>
 			</div>
 		`;
 
-		const progressText = document.getElementById('progress-text');
-		const progressBar = document.getElementById('progress-bar');
-		const pctText = document.getElementById('pct-text');
+		const titleEl = document.getElementById('process-title');
+		const subtitleEl = document.getElementById('process-subtitle');
+		const progressBar = document.getElementById('main-progress-bar') as HTMLElement | null;
+		const pctEl = document.getElementById('progress-pct');
+		const bytesEl = document.getElementById('progress-bytes');
+		const speedEl = document.getElementById('upload-speed');
+		const etaEl = document.getElementById('upload-eta');
+		const detailEl = document.getElementById('status-detail');
+		const speedPanel = document.getElementById('speed-eta-panel');
 
 		try {
-			// 2. Setup Progress Handler
-			ffmpeg.on('log', ({ message }) => console.log('FFmpeg:', message));
-			ffmpeg.on("progress", ({ progress, time }) => {
-			  const percent = Math.round(progress * 100);
-			  document.getElementById("progress").textContent = `${percent}%`;
+			// ── Step 1: Pre-flight init ──
+			if (detailEl) detailEl.textContent = 'Initializing secure upload session…';
+			const initRes = await fetch('/api/upload/init', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					fileName: file.name,
+					fileSize: file.size,
+					fileType: file.type || 'video/mp4',
+					settings: { targetSizeMB, keepAudio, keepFps },
+				}),
 			});
 
-			// 3. Load FFmpeg (multi-threaded core)
-			// @ffmpeg/core-mt uses PThreads + SharedArrayBuffer for 2–4× faster
-			// encoding than the single-threaded @ffmpeg/core. Requires the
-			// page to be cross-origin isolated — see public/_headers (COOP + COEP).
-			// Artifacts are CDN-hosted here because the 31 MB wasm exceeds
-			// Cloudflare Pages' 25 MB per-file limit, so we can't bundle it.
-			if (!ffmpeg.loaded) {
-				if (progressText) progressText.innerText = 'Loading WebAssembly engine (~33 MB, one-time)...';
-				const CORE_BASE = "https://unpkg.com/@ffmpeg/core-mt@0.12.10/dist/umd";
-				const coreURL = await toBlobURL(`${CORE_BASE}/ffmpeg-core.js`, "text/javascript");
-				const wasmURL = await toBlobURL(`${CORE_BASE}/ffmpeg-core.wasm`, "application/wasm");
-				const workerURL = await toBlobURL(`${CORE_BASE}/ffmpeg-core.worker.js`, "text/javascript");
-				await ffmpeg.load({ coreURL, wasmURL, workerURL });
+			if (!initRes.ok) {
+				const errData = await initRes.json().catch(() => ({}));
+				throw new Error(errData.error || `Upload initialization failed (${initRes.status})`);
 			}
 
-			// 4. Mount the large file efficiently using WORKERFS (or fallback to MEMFS)
-			if (progressText) progressText.innerText = 'Mounting file...';
-			
-			let inputPath = '';
-			const inputDir = '/input_' + Date.now();
-			let usedWorkerFS = false;
-			try {
-				await ffmpeg.createDir(inputDir);
-				await ffmpeg.mount('WORKERFS' as any, { files: [file] }, inputDir);
-				inputPath = `${inputDir}/${file.name}`;
-				usedWorkerFS = true;
-			} catch (e) {
-				console.warn('WORKERFS mount failed, falling back to MEMFS:', e);
-				inputPath = `input_${Date.now()}.mp4`;
-				const buffer = await fetchFile(file);
-				await ffmpeg.writeFile(inputPath, buffer);
-			}
+			const { uploadId, chunkSize, totalChunks } = await initRes.json();
 
-			const outputPath = `output_${Date.now()}.mp4`;
+			// ── Step 2: Resumable chunked upload with controlled concurrency (2) ──
+			const CONCURRENCY = 2;
+			const chunkBytesUploaded = new Array(totalChunks).fill(0);
+			let totalUploadedBytes = 0;
+			const startTime = performance.now();
+			let lastSpeedCalcTime = startTime;
+			let lastSpeedCalcBytes = 0;
+			let currentSpeedBps = 0;
 
-			// ── Probe the input for duration + FPS ──
-			// ffmpeg.wasm has no separate ffprobe, so we re-run ffmpeg with a
-			// NULL muxer and read the metadata it prints to stderr (captured by
-			// the 'log' event). A non-zero exit here is normal — we ignore it.
-			if (progressText) progressText.innerText = 'Analyzing video…';
-			let probeDuration = 0;   // seconds; 0 means "unknown"
-			let probeFps = 30;       // fallback FPS for the rare case the log
-			                        //   doesn't include an fps line
-			const probeHandler = ({ message }: { message: string }) => {
-				const dm = message.match(/Duration:\s*(\d+):(\d{1,2}):(\d+(?:\.\d+)?)/);
-				if (dm) {
-					const d = (+dm[1]) * 3600 + (+dm[2]) * 60 + parseFloat(dm[3]);
-					if (d > 0) probeDuration = d;
+			function updateUploadUI(pct: number, uploadedBytes: number, speedBps: number) {
+				if (progressBar) progressBar.style.width = `${pct}%`;
+				if (pctEl) pctEl.textContent = `${pct}%`;
+				if (bytesEl) bytesEl.textContent = `${formatBytes(uploadedBytes)} / ${formatBytes(file.size)}`;
+				if (speedEl) speedEl.textContent = `${(speedBps / (1024 * 1024)).toFixed(1)} MB/s`;
+
+				if (etaEl) {
+					if (speedBps > 50_000) {
+						const remainingBytes = Math.max(0, file.size - uploadedBytes);
+						const remainingSec = remainingBytes / speedBps;
+						etaEl.textContent = formatEta(remainingSec);
+					} else {
+						etaEl.textContent = 'Estimating…';
+					}
 				}
-				const fm = message.match(/(\d+(?:\.\d+)?)\s*fps\b/);
-				if (fm) {
-					const v = parseFloat(fm[1]);
-					if (v > 0 && v <= 240) probeFps = v;
+			}
+
+			async function uploadSingleChunk(index: number, maxRetries = 4): Promise<void> {
+				const start = index * chunkSize;
+				const end = Math.min(start + chunkSize, file.size);
+				// File.slice() keeps ONLY the current 10 MB slice in memory!
+				const chunkBlob = file.slice(start, end);
+				const expectedSize = end - start;
+
+				let attempt = 0;
+				while (attempt < maxRetries) {
+					try {
+						const res = await fetch('/api/upload/chunk', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/octet-stream',
+								'X-Upload-Id': uploadId,
+								'X-Chunk-Index': String(index),
+							},
+							body: chunkBlob,
+						});
+
+						if (!res.ok) {
+							const errJson = await res.json().catch(() => ({}));
+							throw new Error(errJson.error || `HTTP ${res.status}`);
+						}
+
+						chunkBytesUploaded[index] = expectedSize;
+						return;
+					} catch (err: any) {
+						attempt++;
+						if (attempt >= maxRetries) {
+							throw new Error(`Upload error on chunk ${index + 1}/${totalChunks}: ${err?.message || 'Network failure'}`);
+						}
+						const backoff = Math.min(1000 * Math.pow(2, attempt - 1), 4000);
+						if (detailEl) detailEl.textContent = `Network glitch on chunk ${index + 1}. Retrying in ${backoff / 1000}s…`;
+						await new Promise((r) => setTimeout(r, backoff));
+					}
 				}
-			};
-			ffmpeg.on('log', probeHandler);
-			try {
-				await ffmpeg.exec(['-hide_banner', '-i', inputPath, '-f', 'null', '-']);
-			} catch { /* expected on null output */ }
-			ffmpeg.off('log', probeHandler);
-
-			// ── Read the UI's chosen settings ──
-			const targetBtn = document.querySelector<HTMLElement>('.seg-btn.active[data-group="target-size"]');
-			const audioBtn = document.querySelector<HTMLElement>('.seg-btn.active[data-group="audio"]');
-			const fpsToggle = document.getElementById('fps-toggle') as HTMLInputElement | null;
-			const targetSizeMB = parseFloat(targetBtn?.getAttribute('data-value') || '25');
-			const keepAudio = audioBtn?.getAttribute('data-value') !== 'remove';
-			const keepFps = !!fpsToggle?.checked;
-
-			// ── Per-preset CRF (quality floor) ──
-			// Tighter targets get a higher CRF (more compression accepted).
-			// Combined with -b:v below, this gives libx264 both a quality
-			// floor and a bitrate cap — when the cap binds, you still get
-			// consistent quality; when the clip is short and the cap is
-			// generous, CRF keeps the file tight.
-			const CRF_TABLE: Record<string, number> = {
-				"8":   26, // small budget → heavier compression accepted
-				"25":  24,
-				"50":  22,
-				"100": 20,
-			};
-			const targetCrf = CRF_TABLE[String(targetSizeMB)] ?? 24;
-
-			// ── Compute a bitrate that fits the target size ──
-			// FFmpeg's actual output is always a little larger than the raw
-			// bit budget — there's muxing overhead, container metadata,
-			// private stream data, etc. Multiplying by EFFICIENCY (~0.85)
-			// compensates so the output lands near the chosen target
-			// instead of consistently overshooting (same trick compress.lol uses).
-			const AUDIO_BPS = 128_000;
-			const EFFICIENCY = 0.85;
-			const videoBitrateBps = (() => {
-				if (probeDuration <= 0) return 1_000_000; // unknown → default 1 Mbps
-				const rawBudgetBits = targetSizeMB * 1024 * 1024 * 8;
-				const audioTotalBits = (keepAudio ? AUDIO_BPS : 0) * probeDuration;
-				const videoBits = rawBudgetBits * EFFICIENCY - audioTotalBits;
-				const bps = videoBits / probeDuration;
-				// Clamp to [20 kbps, 50 Mbps] so libx264 doesn't choke on
-				// absurd values. Extreme cases (8 MB target on a long clip)
-				// will still overshoot the target even at the floor;
-				// trimming or "Remove Audio" brings it in line.
-				return Math.max(20_000, Math.min(bps, 50_000_000));
-			})();
-			const videoKbps = Math.max(1, Math.round(videoBitrateBps / 1000));
-
-			if (progressText) progressText.innerText =
-				`Targeting ${targetSizeMB} MB · ${keepAudio ? `audio + ${videoKbps} kbps video` : `video only · ${videoKbps} kbps`}`;
-
-			// ── Build the encode args ──
-			// -crf    : per-preset quality floor.
-			// -b:v    : average bitrate cap sized to the chosen target.
-			// -maxrate / -bufsize : VBV constraint so x264 can't bloat a
-			//                       single scene and starve the rest.
-			// -pix_fmt yuv420p : broad playback compatibility (Discord,
-			//                    QuickTime preview, older players).
-			const args: string[] = [
-				'-y',
-				'-i', inputPath,
-				'-c:v', 'libx264',
-				'-preset', 'fast',
-				'-crf', String(targetCrf),
-				'-b:v', `${videoKbps}k`,
-				'-maxrate', `${Math.max(1, Math.round(videoKbps * 1.2))}k`,
-				'-bufsize', `${Math.max(2, Math.round(videoKbps * 2))}k`,
-				'-pix_fmt', 'yuv420p',
-			];
-			if (keepAudio) {
-				args.push('-c:a', 'aac', '-b:a', '128k');
-			} else {
-				args.push('-an'); // drop the audio track
 			}
-			if (keepFps) {
-				args.push('-r', probeFps.toFixed(3)); // preserve original FPS
+
+			// UI ticker running every 200ms
+			const progressTicker = setInterval(() => {
+				totalUploadedBytes = chunkBytesUploaded.reduce((a, b) => a + b, 0);
+				const now = performance.now();
+				const elapsedWindowSec = (now - lastSpeedCalcTime) / 1000;
+				if (elapsedWindowSec >= 0.4) {
+					const bytesInWindow = totalUploadedBytes - lastSpeedCalcBytes;
+					currentSpeedBps = bytesInWindow / elapsedWindowSec;
+					lastSpeedCalcTime = now;
+					lastSpeedCalcBytes = totalUploadedBytes;
+				}
+
+				const pct = Math.min(99, Math.round((totalUploadedBytes / file.size) * 100));
+				updateUploadUI(pct, totalUploadedBytes, currentSpeedBps);
+			}, 200);
+
+			// Run upload queue with controlled concurrency
+			let nextChunkIdx = 0;
+			async function worker(): Promise<void> {
+				while (nextChunkIdx < totalChunks) {
+					const idx = nextChunkIdx++;
+					await uploadSingleChunk(idx);
+				}
 			}
-			args.push('-movflags', '+faststart', outputPath); // web-optimized MP4
 
-			await ffmpeg.exec(args);
+			const workers = Array.from({ length: Math.min(CONCURRENCY, totalChunks) }, () => worker());
+			await Promise.all(workers);
+			clearInterval(progressTicker);
 
-			if (progressText) progressText.innerText = 'Finalizing output...';
-			const data = await ffmpeg.readFile(outputPath) as Uint8Array;
-			
-			if (usedWorkerFS) {
-				await ffmpeg.unmount(inputDir);
-				await ffmpeg.deleteDir(inputDir);
-			} else {
-				await ffmpeg.deleteFile(inputPath);
+			updateUploadUI(100, file.size, currentSpeedBps);
+
+			// ── Step 3: Complete upload and initiate server compression ──
+			if (titleEl) titleEl.textContent = 'Upload complete!';
+			if (detailEl) detailEl.textContent = 'Reassembling video streams & preparing compression engine…';
+
+			const completeRes = await fetch('/api/upload/complete', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					uploadId,
+					settings: { targetSizeMB, keepAudio, keepFps },
+				}),
+			});
+
+			if (!completeRes.ok) {
+				const errData = await completeRes.json().catch(() => ({}));
+				throw new Error(errData.error || 'Failed to assemble video on server.');
 			}
-			await ffmpeg.deleteFile(outputPath);
-			
-			// 8. Generate Download Link
-			const blob = new Blob([data.buffer], { type: "video/mp4" });
-			const url = URL.createObjectURL(blob);
-			const newSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
 
-			const downloadName = `compressed_${file.name.replace(/\.[^/.]+$/, '')}.mp4`;
+			const { jobId } = await completeRes.json();
 
-			dropZone.innerHTML = `
-				<div class="flex flex-col items-center z-10 relative">
-					<div class="w-16 h-16 rounded-full bg-emerald-100 border-4 border-emerald-50 flex items-center justify-center mb-6 shadow-sm">
-						<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-					</div>
-					<h3 class="text-2xl font-bold tracking-tight text-[var(--color-ink)] mb-2">Compression Complete!</h3>
-					<p class="text-[15px] font-medium text-[var(--color-mute)] mb-8 bg-[var(--color-canvas-soft-2)] px-4 py-1.5 rounded-full border border-[var(--color-hairline)]">
-						Reduced from <span class="font-bold text-[var(--color-ink)]">${sizeMB} MB</span> to <span class="font-bold text-emerald-600">${newSizeMB} MB</span>
-					</p>
-					
-					<a href="${url}" download="${downloadName}" class="flex items-center gap-2 bg-[var(--color-ink)] text-[var(--color-canvas)] px-8 py-3.5 rounded-full font-semibold shadow-lg hover:opacity-90 hover:scale-[1.02]" style="transition: all 200ms ease;">
-						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-						Download Video
-					</a>
-					<button class="mt-6 text-[15px] font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" onclick="location.reload()">
-						Compress another file
-					</button>
-				</div>
-			`;
-		} catch (error: any) {
-			console.error('Compression failed:', error);
-			const errorMsg = error?.message || String(error);
-			dropZone.innerHTML = `
-				<div class="flex flex-col items-center z-10 relative">
-					<div class="w-16 h-16 rounded-full bg-red-100 border-4 border-red-50 flex items-center justify-center mb-6 shadow-sm">
-						<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-					</div>
-					<h3 class="text-2xl font-bold tracking-tight text-[var(--color-ink)] mb-3">Compression Failed</h3>
-					<p class="text-[14px] text-[var(--color-mute)] mb-6 text-center max-w-[250px]">Something went wrong during processing.</p>
-					<button class="bg-[var(--color-ink)] text-[var(--color-canvas)] px-8 py-3.5 rounded-full font-semibold shadow-lg hover:opacity-90" onclick="location.reload()">
-						Try Again
-					</button>
-				</div>
-			`;
-		} finally {
-			isCompressing = false;
+			// ── Step 4: Poll compression job status ──
+			if (titleEl) titleEl.textContent = 'Compressing video…';
+			if (subtitleEl) subtitleEl.textContent = `Target: ${targetSizeMB} MB · ${keepAudio ? 'Audio preserved' : 'No audio'}`;
+			if (progressBar) progressBar.style.width = '2%';
+			if (pctEl) pctEl.textContent = '0%';
+			if (bytesEl) bytesEl.textContent = 'Server processing';
+			if (speedPanel) speedPanel.style.display = 'none';
+			if (detailEl) detailEl.textContent = 'Encoding video frames with native H.264…';
+
+			while (true) {
+				await new Promise((r) => setTimeout(r, 1000));
+
+				const jobRes = await fetch(`/api/jobs/${jobId}`);
+				if (!jobRes.ok) continue;
+
+				const job = await jobRes.json();
+
+				if (job.status === 'completed') {
+					// ── Step 5: Render Complete Download UI ──
+					const originalSizeStr = formatBytes(job.originalSize);
+					const compressedSizeStr = formatBytes(job.compressedSize);
+					const savingsPct = Math.max(1, Math.round((1 - job.compressedSize / job.originalSize) * 100));
+
+					dropZone.innerHTML = `
+						<div class="flex flex-col items-center z-10 relative py-2">
+							<div class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/40 border-4 border-emerald-50 dark:border-emerald-900/30 flex items-center justify-center mb-5 shadow-sm">
+								<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+							</div>
+							<h3 class="text-2xl font-bold tracking-tight text-[var(--color-ink)] mb-2">Compression Complete!</h3>
+							<div class="flex flex-wrap items-center justify-center gap-2 mb-8">
+								<span class="text-xs font-medium text-[var(--color-mute)] bg-[var(--color-canvas-soft-2)] px-3.5 py-1.5 rounded-full border border-[var(--color-hairline)]">
+									${originalSizeStr} &rarr; <strong class="text-emerald-600 dark:text-emerald-400 font-bold">${compressedSizeStr}</strong>
+								</span>
+								<span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 px-3 py-1.5 rounded-full">
+									${savingsPct}% smaller
+								</span>
+							</div>
+
+							<a href="${job.downloadUrl}" class="flex items-center gap-2.5 bg-[var(--color-ink)] text-[var(--color-canvas)] px-8 py-3.5 rounded-full font-semibold shadow-lg hover:opacity-90 hover:scale-[1.02] cursor-pointer" style="transition: all 200ms ease;">
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+								Download Video
+							</a>
+							<button class="mt-6 text-sm font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] cursor-pointer" style="transition: color 150ms ease;" onclick="location.reload()">
+								Compress another file
+							</button>
+						</div>
+					`;
+					isProcessing = false;
+					return;
+				}
+
+				if (job.status === 'failed') {
+					throw new Error(job.error || 'Compression failed. The video format may be unsupported.');
+				}
+
+				// Update compression progress
+				const compPct = Math.min(99, Math.max(2, job.progress || 2));
+				if (progressBar) progressBar.style.width = `${compPct}%`;
+				if (pctEl) pctEl.textContent = `${compPct}%`;
+				if (detailEl && job.statusText) detailEl.textContent = job.statusText;
+			}
+		} catch (err: any) {
+			console.error('Processing error:', err);
+			showError(dropZone, 'Processing Failed', err?.message || 'An unexpected error occurred. Please try again.');
+			isProcessing = false;
 		}
 	}
 </script>
+
