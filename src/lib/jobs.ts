@@ -109,33 +109,30 @@ async function runCompression(job: Job, rawPath: string): Promise<void> {
   saveJob(job);
 
   // ── Step 1: Probe duration and FPS ──
+  // Header-only probe: running `ffmpeg -i <file>` with no output reads just the
+  // container metadata and exits in milliseconds. (Decoding to `-f null` here
+  // used to decode the entire video a second time before encoding even began.)
   let probeDuration = 0;
-  let probeFps = 30;
+  let probeFps = 0;
 
   await new Promise<void>((resolve) => {
-    const probeProc = spawn(ffmpegBin, ['-hide_banner', '-i', rawPath, '-f', 'null', '-']);
+    const probeProc = spawn(ffmpegBin, ['-hide_banner', '-i', rawPath]);
     let stderrData = '';
 
     probeProc.stderr.on('data', (chunk) => {
-      const text = chunk.toString();
-      stderrData += text;
-      const dm = text.match(/Duration:\s*(\d+):(\d{2}):(\d{2}(?:\.\d+)?)/);
-      if (dm) {
-        probeDuration = (+dm[1]) * 3600 + (+dm[2]) * 60 + parseFloat(dm[3]);
-      }
-      const fm = text.match(/(\d+(?:\.\d+)?)\s*fps\b/);
-      if (fm) {
-        const v = parseFloat(fm[1]);
-        if (v > 0 && v <= 240) probeFps = v;
-      }
+      stderrData += chunk.toString();
     });
 
     probeProc.on('close', () => {
-      if (probeDuration <= 0) {
-        const dm = stderrData.match(/Duration:\s*(\d+):(\d{2}):(\d{2}(?:\.\d+)?)/);
-        if (dm) {
-          probeDuration = (+dm[1]) * 3600 + (+dm[2]) * 60 + parseFloat(dm[3]);
-        }
+      const dm = stderrData.match(/Duration:\s*(\d+):(\d{2}):(\d{2}(?:\.\d+)?)/);
+      if (dm) {
+        probeDuration = (+dm[1]) * 3600 + (+dm[2]) * 60 + parseFloat(dm[3]);
+      }
+      const videoLine = stderrData.split('\n').find((l) => /Stream #.*Video:/.test(l)) || '';
+      const fm = videoLine.match(/(\d+(?:\.\d+)?)\s*fps\b/);
+      if (fm) {
+        const v = parseFloat(fm[1]);
+        if (v > 0 && v <= 240) probeFps = v;
       }
       resolve();
     });
@@ -165,11 +162,32 @@ async function runCompression(job: Job, rawPath: string): Promise<void> {
   const videoKbps = Math.max(1, Math.round(videoBitrateBps / 1000));
 
   // ── Step 3: Build FFmpeg command arguments ──
+  // Cap the short side of the frame to what the bitrate budget can actually
+  // sustain. Encoding fewer pixels is both much faster and looks better than
+  // starving a 1080p/4K frame of bits.
+  const maxShortSide =
+    videoKbps < 800 ? 480 :
+    videoKbps < 2000 ? 720 :
+    videoKbps < 8000 ? 1080 :
+    0; // 0 = no cap
+  const S = maxShortSide > 0 ? maxShortSide : 100000;
+  // Never upscale; always produce even dimensions (required by yuv420p/libx264).
+  const filters = [
+    `scale='if(gte(iw,ih),-2,trunc(min(iw,${S})/2)*2)':'if(gte(iw,ih),trunc(min(ih,${S})/2)*2,-2)'`,
+  ];
+
+  // Unless the user asked to preserve the original frame rate, cap at 30 fps:
+  // halves the encode work for 50/60 fps sources.
+  if (!keepFps && probeFps > 30.5) {
+    filters.push('fps=30');
+  }
+
   const args = [
     '-y',
     '-i', rawPath,
+    '-vf', filters.join(','),
     '-c:v', 'libx264',
-    '-preset', 'fast',
+    '-preset', 'veryfast',
     '-crf', String(targetCrf),
     '-b:v', `${videoKbps}k`,
     '-maxrate', `${Math.max(1, Math.round(videoKbps * 1.2))}k`,
@@ -181,10 +199,6 @@ async function runCompression(job: Job, rawPath: string): Promise<void> {
     args.push('-c:a', 'aac', '-b:a', '128k');
   } else {
     args.push('-an');
-  }
-
-  if (keepFps && probeFps > 0) {
-    args.push('-r', probeFps.toFixed(3));
   }
 
   args.push('-movflags', '+faststart', outputPath);
@@ -201,7 +215,8 @@ async function runCompression(job: Job, rawPath: string): Promise<void> {
 
     ffmpegProc.stderr.on('data', (chunk) => {
       const text = chunk.toString();
-      stderrLog += text;
+      // Keep only the tail for error reporting — avoids unbounded growth on long encodes
+      stderrLog = (stderrLog + text).slice(-4000);
 
       // Parse FFmpeg timecode: time=00:01:23.45
       const tm = text.match(/time=(\d+):(\d{2}):(\d{2}(?:\.\d+)?)/);

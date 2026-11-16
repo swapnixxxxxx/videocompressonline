@@ -1,8 +1,8 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { createReadStream, createWriteStream } from 'node:fs';
+import { createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
-import type { Readable } from 'node:stream';
+import { Transform, type Readable } from 'node:stream';
 
 export interface UploadMeta {
   uploadId: string;
@@ -89,20 +89,45 @@ export async function saveChunkStream(
     fs.mkdirSync(uploadDir, { recursive: true });
   }
 
-  const chunkPath = path.join(uploadDir, `chunk_${chunkIndex}.part`);
-  const tempPath = `${chunkPath}.tmp`;
+  // Write the chunk straight into its final position in the raw file, so no
+  // reassembly copy is needed once the upload finishes. Chunk directories now
+  // only hold empty marker files recording which chunks have fully arrived.
+  const rawPath = getRawPath(meta);
+  fs.closeSync(fs.openSync(rawPath, 'a')); // create if missing, never truncate
 
-  const writeStream = createWriteStream(tempPath);
-  await pipeline(chunkStream, writeStream);
+  const start = chunkIndex * meta.chunkSize;
+  const expectedBytes = Math.min(meta.chunkSize, meta.fileSize - start);
+  // Never let a chunk spill past its slot into the next chunk's bytes. Excess
+  // data is drained and dropped rather than aborting the stream mid-request
+  // (aborting the request body stream crashes the Node adapter).
+  let bytesReceived = 0;
+  const guard = new Transform({
+    transform(data: Buffer, _enc, cb) {
+      const room = Math.max(0, expectedBytes - bytesReceived);
+      bytesReceived += data.length;
+      cb(null, data.length <= room ? data : data.subarray(0, room));
+    },
+  });
 
-  // Atomic rename so unfinished writes never appear as valid chunks
-  fs.renameSync(tempPath, chunkPath);
+  await pipeline(chunkStream, guard, createWriteStream(rawPath, { flags: 'r+', start }));
+
+  if (bytesReceived !== expectedBytes) {
+    throw new Error(`Chunk ${chunkIndex} has wrong size: got ${bytesReceived} of ${expectedBytes} bytes`);
+  }
+  const bytesWritten = bytesReceived;
+
+  // Mark the chunk as received only after its bytes are fully on disk
+  fs.writeFileSync(path.join(uploadDir, `chunk_${chunkIndex}.part`), '');
 
   meta.lastActivity = Date.now();
   saveUploadMeta(meta);
 
-  const stat = fs.statSync(chunkPath);
-  return { bytesWritten: stat.size };
+  return { bytesWritten };
+}
+
+function getRawPath(meta: UploadMeta): string {
+  const ext = path.extname(meta.fileName).toLowerCase() || '.mp4';
+  return path.join(RAW_DIR, `${meta.uploadId}${ext}`);
 }
 
 export function getUploadedChunks(uploadId: string): number[] {
@@ -138,24 +163,15 @@ export async function assembleChunks(uploadId: string): Promise<{ rawPath: strin
     }
   }
 
-  const ext = path.extname(meta.fileName).toLowerCase() || '.mp4';
-  const rawPath = path.join(RAW_DIR, `${uploadId}${ext}`);
-
-  // Reassemble sequentially by streaming each chunk directly to destination file
-  const destStream = createWriteStream(rawPath, { flags: 'w' });
-  for (let i = 0; i < meta.totalChunks; i++) {
-    const chunkPath = path.join(uploadDir, `chunk_${i}.part`);
-    const chunkReadStream = createReadStream(chunkPath, { highWaterMark: 64 * 1024 });
-    await pipeline(chunkReadStream, destStream, { end: false });
+  // Chunks were already written in place by saveChunkStream — nothing to copy.
+  const rawPath = getRawPath(meta);
+  if (!fs.existsSync(rawPath)) {
+    throw new Error('Uploaded file is missing');
   }
-  destStream.end();
-
-  await new Promise<void>((resolve, reject) => {
-    destStream.on('finish', () => resolve());
-    destStream.on('error', reject);
-  });
-
   const stat = fs.statSync(rawPath);
+  if (stat.size !== meta.fileSize) {
+    throw new Error(`Uploaded file size mismatch: ${stat.size} of ${meta.fileSize} bytes`);
+  }
 
   // Clean up chunks folder to free disk space immediately
   try {
