@@ -1,85 +1,18 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ErrorState from '../components/ErrorState.astro';
 ---
 
 <Layout
-	title="500 – Server Error | VideoCompressOnline"
-	description="Something went wrong on our end. Please try again shortly."
+	title={'500 – Server Error | VideoCompressOnline'}
+	description={'Something went wrong on our end. Please try again shortly.'}
 >
-	<header class="w-full bg-[var(--color-canvas)]/80 backdrop-blur-xl border-b border-[var(--color-hairline)] h-16 flex items-center sticky top-0 z-50">
-		<div class="max-w-6xl mx-auto w-full px-6 flex items-center justify-between">
-			<a href="/" class="flex items-center gap-2.5 group">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-[var(--color-ink)]">
-					<path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.15"/>
-					<path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-				<span class="font-bold text-[15px] tracking-[-0.3px] text-[var(--color-ink)]">VideoCompressOnline</span>
-			</a>
-			<a href="/" class="text-sm font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Back to Home</a>
-		</div>
-	</header>
-
-	<main class="flex-grow flex flex-col items-center justify-center px-6 py-24 text-center relative overflow-hidden">
-		<!-- Ambient background -->
-		<div class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-			<div class="absolute inset-0" style="background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(239, 68, 68, 0.07), transparent), radial-gradient(ellipse 40% 40% at 30% 70%, rgba(251, 146, 60, 0.06), transparent);"></div>
-		</div>
-
-		<div class="relative z-10 max-w-lg mx-auto">
-			<!-- Error code -->
-			<div class="text-[120px] md:text-[160px] font-black leading-none tracking-[-0.06em] select-none" style="background: linear-gradient(135deg, var(--color-ink) 0%, color-mix(in srgb, var(--color-ink) 30%, transparent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-				500
-			</div>
-
-			<!-- Icon -->
-			<div class="mx-auto w-16 h-16 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] flex items-center justify-center mb-6 -mt-4">
-				<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-mute)]">
-					<path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-				</svg>
-			</div>
-
-			<h1 class="text-2xl md:text-3xl font-bold tracking-[-0.03em] text-[var(--color-ink)] mb-3">Internal Server Error</h1>
-			<p class="text-[var(--color-body)] text-[15px] leading-relaxed mb-8">
-				Something went wrong on our end. This is a temporary issue and our team has been
-				notified. Since VideoCompressOnline processes everything locally in your browser,
-				your videos are completely safe.
-			</p>
-
-			<div class="flex flex-col sm:flex-row gap-3 justify-center">
-				<button
-					onclick="window.location.reload()"
-					class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--color-ink)] text-[var(--color-canvas)] text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer"
-				>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-					Try Again
-				</button>
-				<a
-					href="/"
-					class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[var(--color-hairline)] text-[var(--color-ink)] text-sm font-semibold hover:border-[var(--color-hairline-strong)] transition-colors"
-				>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-					Go to Homepage
-				</a>
-			</div>
-
-			<!-- Status notice -->
-			<div class="mt-10 p-4 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-left">
-				<p class="text-xs text-[var(--color-mute)] leading-relaxed">
-					<strong class="text-[var(--color-ink)]">Good to know:</strong> VideoCompressOnline uses WebAssembly to compress videos entirely within your browser. This error does not affect your local video files — they are stored only on your device and never uploaded to any server.
-				</p>
-			</div>
-		</div>
-	</main>
-
-	<footer class="w-full border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] py-8 px-6 mt-auto">
-		<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[var(--color-mute)] gap-3">
-			<p>&copy; 2026 VideoCompressOnline — Free Online Video Compressor.</p>
-			<div class="flex gap-5">
-				<a href="/terms" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Terms</a>
-				<a href="/privacy" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Privacy</a>
-				<a href="/contact" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Contact</a>
-				<a href="/about" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">About</a>
-			</div>
-		</div>
-	</footer>
+	<ErrorState
+		code="500"
+		title={'Internal server error'}
+		message={'Something went wrong on our end. This is a temporary issue and our team has been notified. Since VideoCompressOnline processes everything locally in your browser, your videos are completely safe.'}
+		primary={{ label: "Try again", reload: true }}
+		secondary={{ href: "/", label: "Go to homepage" }}
+		note={'<strong class="text-white font-semibold">Good to know:</strong> VideoCompressOnline uses WebAssembly to compress videos entirely within your browser. This error does not affect your local video files — they are stored only on your device and never uploaded to any server.'}
+	/>
 </Layout>

@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://videocompressonline.com',
+  site: 'https://www.videocompressonline.com',
   output: 'server',
   adapter: node({
     mode: 'standalone',
@@ -20,6 +20,9 @@ export default defineConfig({
     plugins: [
       tailwindcss()
     ],
+    optimizeDeps: {
+      exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
+    },
     server: {
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',

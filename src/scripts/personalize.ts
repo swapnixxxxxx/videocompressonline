@@ -13,21 +13,13 @@ import { DICTS, loadStoredLang, setLang } from "../i18n/runtime";
 // THEME
 // ───────────────────────────────────────────────────────────────────────────
 
-// Inline SVG per theme. Backticks keep the markup readable. Last `/>` on each
-// path is required for XML parsing; we set via innerHTML so the HTML parser
-// would auto-close, but explicit `/` is safer (and stricter parsers expect it).
-const SUN = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41</svg>`;
-const MOON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z</svg>`;
-const WAVE = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2"/><path d="M2 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2"/><path d="M2 22c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2</svg>`;
-const BOOK = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/><path d="M19 17V7a3 3 0 0 0-3-3"/><path d="M8 8h7"/><path d="M8 12h7</svg>`;
-const SUNBURST = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="m4.2 4.2 2.1 2.1"/><path d="m17.7 17.7 2.1 2.1"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="m6.3 17.7-2.1 2.1"/><path d="m19.8 4.2-2.1 2.1</svg>`;
+// Icon shows the theme you'll switch TO.
+const SUN = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`;
+const MOON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 
 const ICONS: Record<Theme, string> = {
-	light: SUN,
-	dark: MOON,
-	ocean: WAVE,
-	sepia: BOOK,
-	solar: SUNBURST,
+	light: MOON,
+	dark: SUN,
 };
 
 function getActiveTheme(): Theme {
@@ -40,14 +32,16 @@ function getActiveTheme(): Theme {
 function applyTheme(next: Theme): void {
 	const html = document.documentElement;
 	html.setAttribute("data-theme", next);
-	// Mirror `.dark` so legacy `dark:` Tailwind utilities fire under all dark themes.
+	// Mirror `.dark` so `dark:` Tailwind utilities fire in dark theme.
 	html.classList.toggle("dark", DARK_THEMES.has(next));
 	try { localStorage.setItem("theme", next); } catch { /* private mode */ }
 
 	const iconSlot = document.getElementById("theme-icon");
 	const labelSpan = document.getElementById("theme-label");
 	if (iconSlot) iconSlot.innerHTML = ICONS[next] || ICONS.light;
-	if (labelSpan) labelSpan.textContent = THEME_LABELS[next];
+	const target: Theme = next === "dark" ? "light" : "dark";
+	if (labelSpan) labelSpan.textContent = THEME_LABELS[target];
+	document.getElementById("theme-toggle")?.setAttribute("aria-label", `Switch to ${THEME_LABELS[target].toLowerCase()} theme`);
 
 	document.querySelectorAll<HTMLElement>("[data-theme-option]").forEach((btn) => {
 		btn.setAttribute(

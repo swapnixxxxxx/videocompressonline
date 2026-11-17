@@ -1,64 +1,52 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Layout 
 	title="About Us - VideoCompressOnline" 
 	description="Learn about VideoCompressOnline, our mission to provide fast, private, and free video compression directly in your browser."
 >
-	<header class="w-full bg-[var(--color-canvas)]/80 backdrop-blur-xl border-b border-[var(--color-hairline)] h-16 flex items-center sticky top-0 z-50">
-		<div class="max-w-6xl mx-auto w-full px-6 flex items-center justify-between">
-			<a href="/" class="flex items-center gap-2.5 group">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-[var(--color-ink)]">
-					<path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.15"/>
-					<path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-				<span class="font-bold text-[15px] tracking-[-0.3px] text-[var(--color-ink)]">VideoCompressOnline</span>
-			</a>
-			<a href="/" class="text-sm font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]">Back to Home</a>
-		</div>
-	</header>
+	<Header tone="light" />
 
-	<main class="flex-grow max-w-4xl mx-auto px-6 py-16 md:py-24 text-[var(--color-body)] leading-relaxed">
-		<h1 class="text-3xl md:text-4xl font-bold tracking-[-0.03em] text-[var(--color-ink)] mb-8">About Us</h1>
+	<section class="band-light w-full border-b border-[var(--color-hairline)]">
+		<div class="max-w-3xl mx-auto px-4 md:px-6 pt-16 pb-10 md:pt-24 md:pb-12">
+			<p class="eyebrow mb-3">Company</p>
+			<h1 class="display-large text-[var(--color-ink)]">About Us</h1>
+		</div>
+	</section>
+
+	<main class="band-light flex-grow w-full">
+	<div class="doc max-w-3xl mx-auto px-4 md:px-6 py-12 md:py-16">
 		
-		<div class="space-y-6 text-[15px]">
+		<div>
 			<p>Welcome to <strong>VideoCompressOnline</strong>.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">Our Mission</h2>
+			<h2>Our Mission</h2>
 			<p>Our mission is simple: to provide the fastest, most secure, and most user-friendly video compression tool on the web. We believe that you shouldn't have to sacrifice your privacy or deal with slow upload speeds just to make a video file smaller.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">The Problem with Traditional Compressors</h2>
+			<h2>The Problem with Traditional Compressors</h2>
 			<p>Most online video compressors work by asking you to upload your personal videos to their remote servers. This introduces several major problems:</p>
-			<ul class="list-disc pl-6 space-y-2">
+			<ul>
 				<li><strong>Privacy Risks:</strong> Your personal videos are stored on someone else's server.</li>
 				<li><strong>Slow Speeds:</strong> You have to wait for the entire video to upload before compression even begins, and then wait again to download it.</li>
 				<li><strong>File Size Limits:</strong> Servers are expensive, so these tools often limit you to 50MB or 100MB unless you pay for a premium subscription.</li>
 			</ul>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">Our Solution</h2>
+			<h2>Our Solution</h2>
 			<p>VideoCompressOnline completely flips this model. By utilizing modern web technologies like <strong>WebAssembly (WASM)</strong> and a browser-ported version of <strong>FFmpeg</strong>, our tool runs the entire compression process directly on your device's CPU.</p>
-			<ul class="list-disc pl-6 space-y-2">
+			<ul>
 				<li><strong>100% Private:</strong> Your files never leave your device.</li>
 				<li><strong>Instant Start:</strong> Since there are no uploads, compression begins immediately.</li>
 				<li><strong>Huge Limits:</strong> Process files up to 5 GB for free, since we don't have to pay for server processing costs.</li>
 			</ul>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">Free Forever</h2>
+			<h2>Free Forever</h2>
 			<p>We are committed to keeping this tool free, accessible, and without watermarks. Whether you're compressing a clip for Discord, preparing a video for email, or optimizing content for the web, VideoCompressOnline is built for you.</p>
 		</div>
+	</div>
 	</main>
 
-	<footer class="w-full border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] py-8 px-6 mt-auto">
-		<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[var(--color-mute)] gap-3">
-			<p>&copy; 2026 VideoCompressOnline — Free Online Video Compressor. Built for speed and privacy.</p>
-			<div class="flex gap-5">
-				<a href="/terms" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Terms</a>
-				<a href="/privacy" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Privacy</a>
-				<a href="/contact" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Contact</a>
-				<a href="/about" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">About</a>
-				<a href="/#faq" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">FAQ</a>
-			</div>
-		</div>
-	</footer>
+	<Footer />
 </Layout>

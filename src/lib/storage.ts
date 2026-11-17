@@ -167,6 +167,22 @@ export async function assembleChunks(uploadId: string): Promise<{ rawPath: strin
   return { rawPath, totalBytes: stat.size };
 }
 
+export function cancelUpload(uploadId: string): void {
+  if (!UPLOAD_ID_REGEX.test(uploadId)) return;
+  const uploadDir = path.join(CHUNKS_DIR, uploadId);
+  if (fs.existsSync(uploadDir)) {
+    try {
+      fs.rmSync(uploadDir, { recursive: true, force: true });
+    } catch {}
+  }
+  const metaPath = path.join(META_DIR, `upload_${uploadId}.json`);
+  if (fs.existsSync(metaPath)) {
+    try {
+      fs.unlinkSync(metaPath);
+    } catch {}
+  }
+}
+
 export function cleanupStorage(): void {
   const now = Date.now();
   const TWO_HOURS = 2 * 60 * 60 * 1000;

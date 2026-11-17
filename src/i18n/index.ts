@@ -20,10 +20,10 @@ export const LANG_DIR: Record<Lang, "ltr" | "rtl"> = {
 };
 
 // All themes, in cycle order on the theme button.
-export const THEMES = ["light", "dark", "ocean", "sepia", "solar"] as const;
+// The design system (DESIGN.md) has exactly two canvas polarities.
+export const THEMES = ["light", "dark"] as const;
 export type Theme = (typeof THEMES)[number];
 export const THEME_LABELS: Record<Theme, string> = {
-	light: "Light", dark: "Dark", ocean: "Ocean", sepia: "Sepia", solar: "Solar",
+	light: "Light", dark: "Dark",
 };
-// Marked as dark equivalents for `dark:` Tailwind utilities (mirrors LIGHT/DARK CSS).
-export const DARK_THEMES: ReadonlySet<Theme> = new Set(["dark", "ocean", "solar"]);
+export const DARK_THEMES: ReadonlySet<Theme> = new Set(["dark"]);

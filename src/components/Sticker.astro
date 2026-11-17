@@ -1,0 +1,54 @@
+---
+// Sticker mascots — hand-outlined, saturated fills, no container, no shadow.
+// Decorative only: placed at section junctions, hidden on small mobile.
+interface Props {
+	name: "squish" | "bolt" | "cone";
+	class?: string;
+	size?: number;
+}
+const { name, class: className = "", size = 120 } = Astro.props;
+const OUTLINE = "#150f23";
+---
+
+<svg
+	class:list={["sticker", className]}
+	width={size}
+	height={size}
+	viewBox="0 0 120 120"
+	aria-hidden="true"
+	focusable="false"
+>
+	{name === "squish" && (
+		<g stroke-linejoin="round" stroke-linecap="round">
+			{/* white sticker border */}
+			<path d="M20 34c0-6 4-10 10-10h60c6 0 10 4 10 10v52c0 6-4 10-10 10H30c-6 0-10-4-10-10z" fill="#fff" stroke="#fff" stroke-width="14" />
+			{/* squished video file */}
+			<path d="M20 34c0-6 4-10 10-10h60c6 0 10 4 10 10v52c0 6-4 10-10 10H30c-6 0-10-4-10-10z" fill="#fa7faa" stroke={OUTLINE} stroke-width="4" />
+			<path d="M50 46v28l24-14z" fill="#fff" stroke={OUTLINE} stroke-width="4" />
+			{/* squeeze arrows */}
+			<path d="M4 60h12M10 53l7 7-7 7" fill="none" stroke={OUTLINE} stroke-width="4" />
+			<path d="M116 60h-12M110 53l-7 7 7 7" fill="none" stroke={OUTLINE} stroke-width="4" />
+			{/* face */}
+			<circle cx="38" cy="40" r="3" fill={OUTLINE} />
+			<circle cx="82" cy="40" r="3" fill={OUTLINE} />
+			<path d="M54 84q6 5 12 0" fill="none" stroke={OUTLINE} stroke-width="3.5" />
+		</g>
+	)}
+	{name === "bolt" && (
+		<g stroke-linejoin="round" stroke-linecap="round">
+			<path d="M68 8 26 66h28l-8 46 48-62H64z" fill="#fff" stroke="#fff" stroke-width="14" />
+			<path d="M68 8 26 66h28l-8 46 48-62H64z" fill="#c2ef4e" stroke={OUTLINE} stroke-width="4" />
+			<circle cx="56" cy="48" r="2.8" fill={OUTLINE} />
+			<circle cx="70" cy="50" r="2.8" fill={OUTLINE} />
+			<path d="M57 58q6 4 11 0" fill="none" stroke={OUTLINE} stroke-width="3" />
+		</g>
+	)}
+	{name === "cone" && (
+		<g stroke-linejoin="round" stroke-linecap="round">
+			<path d="M60 10 34 92h52z M22 92h76v14H22z" fill="#fff" stroke="#fff" stroke-width="14" />
+			<path d="M60 10 34 92h52z" fill="#fa7faa" stroke={OUTLINE} stroke-width="4" />
+			<path d="M48 48h24M42 70h36" stroke="#fff" stroke-width="7" />
+			<path d="M22 92h76v14H22z" fill="#6a5fc1" stroke={OUTLINE} stroke-width="4" />
+		</g>
+	)}
+</svg>

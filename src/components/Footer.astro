@@ -1,23 +1,58 @@
 ---
-// Site footer — single source of truth across pages.
-interface Props {
-	variant?: "home" | "subpage";
-}
-const { variant = "home" } = Astro.props;
-
-// The FAQ anchor only resolves on the home page; subpages fall back to /#faq.
-const faqHref = variant === "home" ? "#faq" : "/#faq";
+// Site footer — footer-light, topped by the lime squiggly divider (DESIGN.md).
+const groups = [
+	{
+		title: "Product",
+		links: [
+			{ href: "/#compressor", label: "Video compressor" },
+			{ href: "/#faq", label: "FAQ" },
+		],
+	},
+	{
+		title: "Company",
+		links: [
+			{ href: "/about", label: "About" },
+			{ href: "/contact", label: "Contact" },
+		],
+	},
+	{
+		title: "Legal",
+		links: [
+			{ href: "/terms", label: "Terms of service" },
+			{ href: "/privacy", label: "Privacy policy" },
+		],
+	},
+];
 ---
 
-<footer class="w-full border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] py-8 px-6 mt-auto">
-	<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[var(--color-mute)] gap-3">
-		<p data-i18n="footer.copyright">&copy; 2026 VideoCompressOnline — Free Online Video Compressor. Built for speed and privacy</p>
-		<div class="flex gap-5">
-			<a href="/terms" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.terms">Terms</a>
-			<a href="/privacy" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.privacy">Privacy</a>
-			<a href="/contact" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.contact">Contact</a>
-			<a href="/about" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.about">About</a>
-			<a href={faqHref} class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;" data-i18n="footer.faq">FAQ</a>
+<footer class="band-light w-full mt-auto">
+	<div class="max-w-[1152px] mx-auto px-4 md:px-6">
+		<div class="squiggle w-full" aria-hidden="true"></div>
+	</div>
+	<div class="max-w-[1152px] mx-auto px-4 md:px-6 pt-10 pb-8">
+		<div class="grid grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1fr] gap-8">
+			<div class="col-span-2 md:col-span-1 max-w-xs">
+				<p class="text-[16px] font-semibold text-[var(--color-ink)]">VideoCompressOnline</p>
+				<p class="mt-2 text-[14px] leading-[1.43] text-[var(--color-body)]">
+					Free online video compressor. Shrink MP4, MOV, WebM and MKV files up to 2&nbsp;GB, with no watermarks and no sign-up.
+				</p>
+			</div>
+			{groups.map((g) => (
+				<div>
+					<p class="micro-cap mb-3">{g.title}</p>
+					<ul class="space-y-2">
+						{g.links.map((l) => (
+							<li>
+								<a href={l.href} class="text-[14px] text-[var(--color-ink)] hover:underline underline-offset-4">{l.label}</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			))}
+		</div>
+		<div class="mt-10 pt-6 border-t border-[var(--color-hairline)] flex flex-col sm:flex-row justify-between gap-2 text-[14px] text-[var(--color-mute)]">
+			<p>&copy; 2026 VideoCompressOnline. Built for speed and privacy.</p>
+			<p>H.264 / AAC · MP4 output</p>
 		</div>
 	</div>
 </footer>

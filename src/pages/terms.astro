@@ -1,62 +1,50 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Layout 
 	title="Terms & Conditions - VideoCompressOnline" 
 	description="Terms and Conditions for using VideoCompressOnline."
 >
-	<header class="w-full bg-[var(--color-canvas)]/80 backdrop-blur-xl border-b border-[var(--color-hairline)] h-16 flex items-center sticky top-0 z-50">
-		<div class="max-w-6xl mx-auto w-full px-6 flex items-center justify-between">
-			<a href="/" class="flex items-center gap-2.5 group">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-[var(--color-ink)]">
-					<path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.15"/>
-					<path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-				<span class="font-bold text-[15px] tracking-[-0.3px] text-[var(--color-ink)]">VideoCompressOnline</span>
-			</a>
-			<a href="/" class="text-sm font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]">Back to Home</a>
-		</div>
-	</header>
+	<Header tone="light" />
 
-	<main class="flex-grow max-w-4xl mx-auto px-6 py-16 md:py-24 text-[var(--color-body)] leading-relaxed">
-		<h1 class="text-3xl md:text-4xl font-bold tracking-[-0.03em] text-[var(--color-ink)] mb-8">Terms & Conditions</h1>
+	<section class="band-light w-full border-b border-[var(--color-hairline)]">
+		<div class="max-w-3xl mx-auto px-4 md:px-6 pt-16 pb-10 md:pt-24 md:pb-12">
+			<p class="eyebrow mb-3">Legal</p>
+			<h1 class="display-large text-[var(--color-ink)]">Terms & Conditions</h1>
+		</div>
+	</section>
+
+	<main class="band-light flex-grow w-full">
+	<div class="doc max-w-3xl mx-auto px-4 md:px-6 py-12 md:py-16">
 		
-		<div class="space-y-6 text-[15px]">
+		<div>
 			<p><strong>Last Updated: June 2026</strong></p>
 			
 			<p>By accessing and using VideoCompressOnline (the "Website"), you agree to be bound by the following terms and conditions.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">1. Use of the Service</h2>
+			<h2>1. Use of the Service</h2>
 			<p>VideoCompressOnline provides a client-side video compression tool. You are permitted to use this service for both personal and commercial purposes, provided you do not use it for illegal activities or to compress illicit materials.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">2. Local Processing and Data Responsibility</h2>
+			<h2>2. Local Processing and Data Responsibility</h2>
 			<p>All video processing occurs locally on your device within your web browser. We do not upload, store, or have access to the video files you process. You are solely responsible for ensuring you have backups of your original files, as video compression is a lossy process that alters the original data.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">3. Intellectual Property</h2>
+			<h2>3. Intellectual Property</h2>
 			<p>You retain all intellectual property rights to the videos you process using our tool. We claim no ownership over your content.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">4. Disclaimer of Warranties</h2>
+			<h2>4. Disclaimer of Warranties</h2>
 			<p>The service is provided "as is" without warranty of any kind. While we strive to provide high-quality compression, we do not guarantee that the service will meet your specific requirements, be error-free, or be available at all times. The heavy processing required for video compression may cause high CPU usage on your device.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">5. Limitation of Liability</h2>
+			<h2>5. Limitation of Liability</h2>
 			<p>In no event shall VideoCompressOnline or its creators be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use the service, including but not limited to loss of data or damage to your device from high resource usage.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">6. Changes to Terms</h2>
+			<h2>6. Changes to Terms</h2>
 			<p>We reserve the right to modify these terms at any time. Continued use of the website after any such changes constitutes your consent to the modifications.</p>
 		</div>
+	</div>
 	</main>
 
-	<footer class="w-full border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] py-8 px-6 mt-auto">
-		<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[var(--color-mute)] gap-3">
-			<p>&copy; 2026 VideoCompressOnline — Free Online Video Compressor. Built for speed and privacy.</p>
-			<div class="flex gap-5">
-				<a href="/terms" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Terms</a>
-				<a href="/privacy" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Privacy</a>
-				<a href="/contact" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Contact</a>
-				<a href="/about" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">About</a>
-				<a href="/#faq" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">FAQ</a>
-			</div>
-		</div>
-	</footer>
+	<Footer />
 </Layout>

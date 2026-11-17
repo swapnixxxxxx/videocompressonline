@@ -1,0 +1,64 @@
+---
+// Shared layout for 400 / 403 / 404 / 500 pages — dark starfield canvas,
+// the status code as a lime keyword chip, one primary + one ghost action.
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+import Sticker from "./Sticker.astro";
+
+interface Action {
+	href?: string;
+	label: string;
+	reload?: boolean;
+}
+interface Props {
+	code: string;
+	title: string;
+	message: string;
+	primary: Action;
+	secondary: Action;
+	note?: string;
+}
+const { code, title, message, primary, secondary, note } = Astro.props;
+---
+
+<Header tone="dark" />
+
+<main class="band-dark starfield relative flex-grow flex flex-col items-center justify-center px-4 py-24 md:py-32 text-center overflow-hidden">
+	<Sticker name="cone" size={96} class="absolute hidden md:block right-[12%] top-16 rotate-12" />
+
+	<div class="relative z-10 max-w-xl mx-auto">
+		<p class="eyebrow !text-[var(--color-body)] mb-6">Error</p>
+		<p class="display-hero text-white leading-none mb-8" aria-hidden="true">
+			<span class="chip-lime">{code}</span>
+		</p>
+		<h1 class="heading-xl text-white mb-4">{title}</h1>
+		<p class="body-lg text-[var(--color-body)] mb-10">{message}</p>
+
+		<div class="flex flex-col sm:flex-row gap-3 justify-center">
+			{primary.reload ? (
+				<button type="button" onclick="window.location.reload()" class="btn btn-primary btn-glow">{primary.label}</button>
+			) : (
+				<a href={primary.href} class="btn btn-primary btn-glow">{primary.label}</a>
+			)}
+			<a href={secondary.href} class="btn btn-ghost">{secondary.label}</a>
+		</div>
+
+		{note && (
+			<div class="card-night mt-12 p-5 text-left">
+				<p class="text-[14px] leading-[1.43] text-[var(--color-body)]" set:html={note} />
+			</div>
+		)}
+
+		<nav class="mt-12 pt-8 border-t border-[#362d59]" aria-label="Helpful links">
+			<p class="micro-cap mb-4">Helpful links</p>
+			<div class="flex flex-wrap gap-x-6 gap-y-2 justify-center text-[16px]">
+				<a href="/#faq" class="link text-white">FAQ</a>
+				<a href="/about" class="link text-white">About</a>
+				<a href="/contact" class="link text-white">Contact</a>
+				<a href="/privacy" class="link text-white">Privacy</a>
+			</div>
+		</nav>
+	</div>
+</main>
+
+<Footer />

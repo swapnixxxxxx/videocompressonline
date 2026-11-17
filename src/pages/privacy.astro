@@ -1,65 +1,53 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Layout 
 	title="Privacy Policy - VideoCompressOnline" 
 	description="Privacy Policy for VideoCompressOnline. Learn how we protect your privacy by processing videos locally on your device without uploading them to our servers."
 >
-	<header class="w-full bg-[var(--color-canvas)]/80 backdrop-blur-xl border-b border-[var(--color-hairline)] h-16 flex items-center sticky top-0 z-50">
-		<div class="max-w-6xl mx-auto w-full px-6 flex items-center justify-between">
-			<a href="/" class="flex items-center gap-2.5 group">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-[var(--color-ink)]">
-					<path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.15"/>
-					<path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-				<span class="font-bold text-[15px] tracking-[-0.3px] text-[var(--color-ink)]">VideoCompressOnline</span>
-			</a>
-			<a href="/" class="text-sm font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]">Back to Home</a>
-		</div>
-	</header>
+	<Header tone="light" />
 
-	<main class="flex-grow max-w-4xl mx-auto px-6 py-16 md:py-24 text-[var(--color-body)] leading-relaxed">
-		<h1 class="text-3xl md:text-4xl font-bold tracking-[-0.03em] text-[var(--color-ink)] mb-8">Privacy Policy</h1>
+	<section class="band-light w-full border-b border-[var(--color-hairline)]">
+		<div class="max-w-3xl mx-auto px-4 md:px-6 pt-16 pb-10 md:pt-24 md:pb-12">
+			<p class="eyebrow mb-3">Legal</p>
+			<h1 class="display-large text-[var(--color-ink)]">Privacy Policy</h1>
+		</div>
+	</section>
+
+	<main class="band-light flex-grow w-full">
+	<div class="doc max-w-3xl mx-auto px-4 md:px-6 py-12 md:py-16">
 		
-		<div class="space-y-6 text-[15px]">
+		<div>
 			<p><strong>Last Updated: June 2026</strong></p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">1. Introduction</h2>
+			<h2>1. Introduction</h2>
 			<p>At VideoCompressOnline, we take your privacy extremely seriously. We built our service with a "privacy-first" approach. This Privacy Policy outlines how we handle your data when you use our video compression tools.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">2. Local Processing (No Uploads)</h2>
+			<h2>2. Local Processing (No Uploads)</h2>
 			<p>The core feature of VideoCompressOnline is that <strong>we never upload your video files to our servers</strong>. All video processing, encoding, and compression happens entirely locally on your device within your web browser using WebAssembly technology. We do not have access to your videos, and they are never transmitted across the internet to us.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">3. Information We Collect</h2>
+			<h2>3. Information We Collect</h2>
 			<p>Because our service runs client-side, we collect minimal data:</p>
-			<ul class="list-disc pl-6 space-y-2">
+			<ul>
 				<li><strong>Usage Data:</strong> We may use basic, anonymized analytics to understand general website traffic, page views, and interactions (such as which buttons are clicked). This data is completely anonymous.</li>
 				<li><strong>Logs:</strong> Standard server logs containing IP addresses, browser types, and access times may be temporarily stored for security and debugging purposes.</li>
 			</ul>
 			
 
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">5. Cookies</h2>
+			<h2>5. Cookies</h2>
 			<p>We use minimal cookies necessary for the basic functioning of the website, such as remembering your dark mode/light mode theme preference (stored in local storage).</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">6. Changes to this Policy</h2>
+			<h2>6. Changes to this Policy</h2>
 			<p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
 			
-			<h2 class="text-xl font-bold text-[var(--color-ink)] mt-8">7. Contact Us</h2>
-			<p>If you have any questions about this Privacy Policy, please contact us through our <a href="/contact" class="text-[var(--color-ink)] underline">Contact Page</a>.</p>
+			<h2>7. Contact Us</h2>
+			<p>If you have any questions about this Privacy Policy, please contact us through our <a href="/contact">Contact Page</a>.</p>
 		</div>
+	</div>
 	</main>
 
-	<footer class="w-full border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] py-8 px-6 mt-auto">
-		<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[var(--color-mute)] gap-3">
-			<p>&copy; 2026 VideoCompressOnline — Free Online Video Compressor. Built for speed and privacy.</p>
-			<div class="flex gap-5">
-				<a href="/terms" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Terms</a>
-				<a href="/privacy" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Privacy</a>
-				<a href="/contact" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Contact</a>
-				<a href="/about" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">About</a>
-				<a href="/#faq" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">FAQ</a>
-			</div>
-		</div>
-	</footer>
+	<Footer />
 </Layout>

@@ -1,5 +1,5 @@
 # robots.txt — VideoCompressOnline
-# https://videocompressonline.com
+# https://www.videocompressonline.com
 
 User-agent: *
 Allow: /
@@ -11,4 +11,5 @@ Disallow: /404
 Disallow: /500
 
 # Sitemap location
-Sitemap: https://videocompressonline.com/sitemap-index.xml
+Sitemap: https://www.videocompressonline.com/sitemap-index.xml
+

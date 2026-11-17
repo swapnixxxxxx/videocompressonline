@@ -1,88 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ErrorState from '../components/ErrorState.astro';
 ---
 
 <Layout
-	title="404 – Page Not Found | VideoCompressOnline"
-	description="The page you're looking for doesn't exist. Head back to VideoCompressOnline to compress your videos for free."
+	title={'404 – Page Not Found | VideoCompressOnline'}
+	description={"The page you're looking for doesn't exist. Head back to VideoCompressOnline to compress your videos for free."}
 >
-	<header class="w-full bg-[var(--color-canvas)]/80 backdrop-blur-xl border-b border-[var(--color-hairline)] h-16 flex items-center sticky top-0 z-50">
-		<div class="max-w-6xl mx-auto w-full px-6 flex items-center justify-between">
-			<a href="/" class="flex items-center gap-2.5 group">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-[var(--color-ink)]">
-					<path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity="0.15"/>
-					<path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-				<span class="font-bold text-[15px] tracking-[-0.3px] text-[var(--color-ink)]">VideoCompressOnline</span>
-			</a>
-			<a href="/" class="text-sm font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Back to Home</a>
-		</div>
-	</header>
-
-	<main class="flex-grow flex flex-col items-center justify-center px-6 py-24 text-center relative overflow-hidden">
-		<!-- Ambient background -->
-		<div class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-			<div class="absolute inset-0" style="background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(0, 124, 240, 0.08), transparent), radial-gradient(ellipse 40% 40% at 70% 70%, rgba(121, 40, 202, 0.07), transparent);"></div>
-		</div>
-
-		<div class="relative z-10 max-w-lg mx-auto">
-			<!-- Error code -->
-			<div class="text-[120px] md:text-[160px] font-black leading-none tracking-[-0.06em] select-none" style="background: linear-gradient(135deg, var(--color-ink) 0%, color-mix(in srgb, var(--color-ink) 30%, transparent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-				404
-			</div>
-
-			<!-- Icon -->
-			<div class="mx-auto w-16 h-16 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] flex items-center justify-center mb-6 -mt-4">
-				<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-mute)]">
-					<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v3M11 14h.01"/>
-				</svg>
-			</div>
-
-			<h1 class="text-2xl md:text-3xl font-bold tracking-[-0.03em] text-[var(--color-ink)] mb-3">Page Not Found</h1>
-			<p class="text-[var(--color-body)] text-[15px] leading-relaxed mb-8">
-				Oops! The page you're looking for has been moved, deleted, or never existed.
-				Don't worry — your videos are safe, and we can get you back on track.
-			</p>
-
-			<div class="flex flex-col sm:flex-row gap-3 justify-center">
-				<a
-					href="/"
-					class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--color-ink)] text-[var(--color-canvas)] text-sm font-semibold hover:opacity-90 transition-opacity"
-				>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-					Go to Homepage
-				</a>
-				<a
-					href="/#compress"
-					class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[var(--color-hairline)] text-[var(--color-ink)] text-sm font-semibold hover:border-[var(--color-hairline-strong)] transition-colors"
-				>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-					Compress a Video
-				</a>
-			</div>
-
-			<!-- Helpful links -->
-			<div class="mt-12 pt-8 border-t border-[var(--color-hairline)]">
-				<p class="text-xs text-[var(--color-mute)] mb-4 uppercase tracking-wider font-semibold">Helpful Links</p>
-				<div class="flex flex-wrap gap-4 justify-center text-sm text-[var(--color-body)]">
-					<a href="/#faq" class="hover:text-[var(--color-ink)] transition-colors">FAQ</a>
-					<a href="/about" class="hover:text-[var(--color-ink)] transition-colors">About Us</a>
-					<a href="/contact" class="hover:text-[var(--color-ink)] transition-colors">Contact</a>
-					<a href="/privacy" class="hover:text-[var(--color-ink)] transition-colors">Privacy Policy</a>
-				</div>
-			</div>
-		</div>
-	</main>
-
-	<footer class="w-full border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] py-8 px-6 mt-auto">
-		<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-[var(--color-mute)] gap-3">
-			<p>&copy; 2026 VideoCompressOnline — Free Online Video Compressor.</p>
-			<div class="flex gap-5">
-				<a href="/terms" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Terms</a>
-				<a href="/privacy" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Privacy</a>
-				<a href="/contact" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">Contact</a>
-				<a href="/about" class="hover:text-[var(--color-ink)]" style="transition: color 150ms ease;">About</a>
-			</div>
-		</div>
-	</footer>
+	<ErrorState
+		code="404"
+		title={'Page not found'}
+		message={"The page you're looking for has been moved, deleted, or never existed. Don't worry, your videos are safe, and we can get you back on track."}
+		primary={{ href: "/", label: "Go to homepage" }}
+		secondary={{ href: "/#compressor", label: "Compress a video" }}
+	/>
 </Layout>
